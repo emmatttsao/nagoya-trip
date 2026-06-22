@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>名古屋・岐阜 旅行手帳</title>
+<style>
+:root {
+  --bg: #f7f5f0;
+  --bg2: #ffffff;
+  --bg3: #faf8f5;
+  --bg4: #f0ece4;
+  --text1: #1a1a1a;
+  --text2: #555;
+  --text3: #888;
+  --text4: #bbb;
+  --border: #e0dbd2;
+  --border2: #e8e4dc;
+  --accent: #C4763A;
+  --accent-bg: #fdf3ec;
+  --accent-light: #f5e9dc;
+  --blue: #1a73e8;
+  --blue-bg: #e8f4fd;
+  --blue-border: #378ADD;
+  --blue-text: #1a5276;
+  --blue-tag-bg: #f0f6ff;
+  --blue-tag-border: #d8e6fb;
+  --purple: #7F77DD;
+  --purple-bg: #f4f2ff;
+  --red: #e74c3c;
+  --red-bg: #fff5f5;
+  --red-text: #c0392b;
+  --green: #1D9E75;
+  --nav-bg: #ffffff;
+  --nav-border: #e0dbd2;
+  --card-bg: #ffffff;
+  --summary-bg: #fdf3ec;
+  --warn-bg: #fff5f5;
+  --note-bg: #e8f4fd;
+  --transit-bg: #f4f2ff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111111;
+    --bg2: #1c1c1e;
+    --bg3: #242426;
+    --bg4: #2c2c2e;
+    --text1: #f0f0f0;
+    --text2: #c0c0c0;
+    --text3: #888;
+    --text4: #555;
+    --border: #333336;
+    --border2: #2e2e30;
+    --accent: #e08a50;
+    --accent-bg: #2a1f14;
+    --accent-light: #3a2518;
+    --blue: #4a9eff;
+    --blue-bg: #0d2035;
+    --blue-border: #3a7fc1;
+    --blue-text: #89c4f4;
+    --blue-tag-bg: #0d1f33;
+    --blue-tag-border: #1e3a55;
+    --purple: #9b95e8;
+    --purple-bg: #1a1830;
+    --red: #e05050;
+    --red-bg: #2a1010;
+    --red-text: #e88080;
+    --green: #2ec890;
+    --nav-bg: #1c1c1e;
+    --nav-border: #333336;
+    --card-bg: #1c1c1e;
+    --summary-bg: #2a1f14;
+    --warn-bg: #2a1010;
+    --note-bg: #0d2035;
+    --transit-bg: #1a1830;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ── NAV: always visible at top ── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--nav-border);
+  display: flex;
+  padding-top: env(safe-area-inset-top);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  .nav { box-shadow: 0 1px 6px rgba(0,0,0,0.4); }
+}
+.nav-btn {
+  flex: 1;
+  padding: 13px 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color .15s, border-color .15s;
+  letter-spacing: .01em;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.nav-btn:hover:not(.active) { color: var(--text2); }
+
+/* ── PANELS ── */
+.nav-spacer { height: 52px; }
+.panel { display: none; padding: 16px; max-width: 680px; margin: 0 auto; }
+.panel.active { display: block; }
+
+/* ── TRIP HEADER ── */
+.trip-header { padding: 4px 0 18px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+.trip-title { font-size: 20px; font-weight: 700; color: var(--text1); letter-spacing: .02em; }
+.trip-sub { font-size: 12px; color: var(--text3); margin-top: 5px; }
+
+/* ── DAY CARDS ── */
+.day-card { margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card-bg); }
+.day-accent { height: 3px; background: var(--accent); }
+.day-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; background: var(--card-bg); -webkit-tap-highlight-color: transparent; }
+.day-header:active { background: var(--bg3); }
+.day-left { display: flex; align-items: baseline; gap: 12px; }
+.day-num { font-size: 26px; font-weight: 700; color: var(--text1); line-height: 1; }
+.day-info { display: flex; flex-direction: column; gap: 2px; }
+.day-date { font-size: 11px; color: var(--text3); }
+.day-title { font-size: 13px; font-weight: 600; color: var(--text1); }
+.chevron { font-size: 16px; color: var(--text4); transition: transform .2s; flex-shrink: 0; }
+.chevron.open { transform: rotate(180deg); }
+.day-body { display: none; padding: 0 16px 16px; }
+.day-body.open { display: block; }
+
+/* ── TIMELINE ── */
+.tl { padding-top: 12px; }
+.row { display: flex; gap: 8px; position: relative; }
+.row:not(:last-child)::before { content: ''; position: absolute; left: 26px; top: 28px; bottom: -8px; width: 1px; background: var(--border2); }
+.tc { width: 42px; flex-shrink: 0; text-align: right; padding-top: 4px; }
+.tm { font-size: 11px; color: var(--text3); white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+.ic { width: 20px; flex-shrink: 0; display: flex; justify-content: center; padding-top: 2px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--text4); background: var(--card-bg); margin-top: 3px; }
+.dot.tr { border-color: var(--purple); }
+.dot.fo { border-color: var(--green); }
+.dot.si { border-color: var(--accent); }
+.dot.ho { border-color: var(--blue-border); }
+.dot.pl { border-color: var(--text3); }
+.cc { flex: 1; padding-bottom: 12px; min-width: 0; }
+.it { font-size: 13px; font-weight: 600; color: var(--text1); line-height: 1.4; padding-top: 1px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.ml { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; color: var(--blue); text-decoration: none; padding: 2px 7px; border: 1px solid var(--blue-tag-border); border-radius: 20px; white-space: nowrap; background: var(--blue-tag-bg); flex-shrink: 0; }
+.ml:active { opacity: .7; }
+.id { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.6; }
+.is { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.ti { margin-top: 6px; padding: 8px 10px; background: var(--transit-bg); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; }
+.tr2 { font-size: 12px; color: var(--text1); line-height: 1.8; }
+.tb { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.wb { margin-top: 6px; padding: 8px 10px; background: var(--warn-bg); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; }
+.wb .tr2 { color: var(--red-text); }
+.nb { margin-top: 6px; padding: 8px 10px; background: var(--note-bg); border-left: 3px solid var(--blue-border); border-radius: 0 8px 8px 0; }
+.nb .tr2 { font-size: 12px; color: var(--blue-text); line-height: 1.7; }
+.sb { display: flex; gap: 5px; flex-wrap: wrap; padding: 8px 16px; border-top: 1px solid var(--border2); background: var(--bg3); }
+.si2 { font-size: 11px; color: var(--text3); }
+
+/* ── BUDGET ── */
+.bud-day { margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card-bg); }
+.bud-day-hd { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+.bud-day-hd:active { background: var(--bg3); }
+.bud-day-title { font-size: 13px; font-weight: 600; color: var(--text1); }
+.bud-day-total { font-size: 13px; font-weight: 700; color: var(--accent); }
+.bud-body { display: none; padding: 0 16px 16px; }
+.bud-body.open { display: block; }
+.bud-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.bud-table th { font-size: 11px; font-weight: 600; color: var(--text3); text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--border2); letter-spacing: .04em; }
+.bud-table td { padding: 5px 4px; border-bottom: .5px solid var(--border2); vertical-align: middle; }
+.bud-table input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 5px 7px; font-size: 12px; background: var(--bg3); color: var(--text1); outline: none; font-family: inherit; }
+.bud-table input:focus { border-color: var(--accent); background: var(--bg2); }
+.bud-table input[type=number] { text-align: right; }
+.bud-add { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; font-size: 12px; color: var(--accent); background: none; border: 1px dashed var(--accent); border-radius: 8px; padding: 6px 14px; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+.bud-add:active { background: var(--accent-bg); }
+.bud-del { background: none; border: none; cursor: pointer; color: var(--text4); font-size: 16px; padding: 2px 6px; line-height: 1; -webkit-tap-highlight-color: transparent; }
+.bud-del:active { color: var(--red); }
+.bud-summary { background: var(--summary-bg); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; border: 1px solid var(--accent-light); }
+.bud-summary-title { font-size: 11px; color: var(--text3); margin-bottom: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.bud-summary-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: .5px solid var(--accent-light); }
+.bud-summary-row:last-child { border: none; padding-top: 10px; margin-top: 4px; }
+.bud-summary-label { font-size: 13px; color: var(--text2); }
+.bud-summary-val { font-size: 13px; font-weight: 600; color: var(--accent); }
+.bud-total-label { font-size: 14px; font-weight: 700; color: var(--text1); }
+.bud-total-val { font-size: 16px; font-weight: 700; color: var(--accent); }
+
+/* ── CHECKLIST ── */
+.cl-progress { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 14px; }
+.cl-prog-bar-wrap { flex: 1; height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+.cl-prog-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
+.cl-prog-text { font-size: 12px; color: var(--text3); white-space: nowrap; }
+.cl-section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+.cl-section-title { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: .07em; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border2); text-transform: uppercase; }
+.cl-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: .5px solid var(--border2); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cl-item:last-child { border: none; }
+.cl-cb { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--text4); background: var(--bg3); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.cl-cb.checked { background: var(--accent); border-color: var(--accent); }
+.cl-cb.checked::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
+.cl-label { font-size: 13px; color: var(--text1); flex: 1; }
+.cl-label.checked { color: var(--text4); text-decoration: line-through; }
+
+/* ── BUDGET SHEET SYNC ── */
+.bud-sync-bar { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; margin-bottom:12px; }
+.bud-sync-status { font-size:12px; color:var(--text3); }
+.bud-sync-status.ok { color:var(--green); }
+.bud-sync-status.err { color:var(--red); }
+.bud-sync-btn { font-size:12px; color:var(--accent); background:none; border:1px solid var(--accent); border-radius:8px; padding:4px 12px; cursor:pointer; font-family:inherit; }
+.bud-sync-btn:active { background:var(--accent-bg); }
+.bud-add-form { background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:14px; }
+.bud-form-title { font-size:13px; font-weight:700; color:var(--text1); margin-bottom:10px; }
+.bud-form-row { display:flex; gap:8px; margin-bottom:8px; }
+.bud-input { flex:1; border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13px; background:var(--bg3); color:var(--text1); outline:none; font-family:inherit; min-width:0; }
+.bud-input:focus { border-color:var(--accent); background:var(--bg2); }
+.bud-submit-btn { width:100%; margin-top:10px; padding:10px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
+.bud-submit-btn:active { opacity:.85; }
+.bud-submit-btn:disabled { opacity:.5; cursor:default; }
+.bud-day-section { margin-bottom:12px; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--card-bg); }
+.bud-day-hd2 { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--bg3); border-bottom:1px solid var(--border); }
+.bud-day-label { font-size:13px; font-weight:600; color:var(--text1); }
+.bud-day-amt { font-size:13px; font-weight:700; color:var(--accent); }
+.bud-entry { display:flex; align-items:center; gap:8px; padding:10px 16px; border-bottom:.5px solid var(--border2); }
+.bud-entry:last-child { border:none; }
+.bud-entry-who { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+.bud-entry-who.emma { background:#fdf3ec; color:var(--accent); }
+.bud-entry-who.partner { background:#f0f6ff; color:var(--blue); }
+@media (prefers-color-scheme:dark) {
+  .bud-entry-who.emma { background:#2a1f14; }
+  .bud-entry-who.partner { background:#0d1f33; }
+}
+.bud-entry-info { flex:1; min-width:0; }
+.bud-entry-item { font-size:13px; color:var(--text1); font-weight:500; }
+.bud-entry-note { font-size:11px; color:var(--text3); margin-top:1px; }
+.bud-entry-amt { font-size:13px; font-weight:600; color:var(--text1); white-space:nowrap; }
+.bud-empty { font-size:12px; color:var(--text4); padding:12px 16px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="switchTab('itinerary',this)">🗓 行程</button>
+  <button class="nav-btn" onclick="switchTab('budget',this)">💴 預算</button>
+  <button class="nav-btn" onclick="switchTab('checklist',this)">🧳 攜帶清單</button>
+</div>
+<div class="nav-spacer"></div>
+
+<!-- ══════════════ ITINERARY ══════════════ -->
+<div class="panel active" id="tab-itinerary">
+<div class="trip-header">
+  <div class="trip-title">名古屋・岐阜 旅行手帳</div>
+  <div class="trip-sub">2026年9月5日（六）— 9月8日（二）・VESSEL INN SAKAE STATION</div>
+</div>
+
+<!-- DAY 1 -->
+<div class="day-card">
+<div class="day-accent"></div>
+<div class="day-header" onclick="togDay('dy1')">
+  <div class="day-left"><div class="day-num">01</div><div class="day-info"><div class="day-date">9月5日（六）</div><div class="day-title">抵達日・安頓入住</div></div></div>
+  <span class="chevron" id="ch-dy1">▾</span>
+</div>
+<div class="day-body" id="dy1"><div class="tl">
+<div class="row"><div class="tc"><span class="tm">14:55</span></div><div class="ic"><div class="dot pl"></div></div><div class="cc"><div class="it">✈️ JX838 桃園起飛</div><div class="id">14:55 起飛 → 18:45 抵達中部國際機場（NGO）</div></div></div>
+<div class="row"><div class="tc"><span class="tm">18:45</span></div><div class="ic"><div class="dot pl"></div></div><div class="cc"><div class="it">落地・入境・領行李 <a class="ml" href="https://maps.google.com/?q=中部国際空港+セントレア+愛知県常滑市" target="_blank">📍 地圖</a></div><div class="id">預留 2 小時完成入境手續</div></div></div>
+<div class="row"><div class="tc"><span class="tm">20:45</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 名鐵特急 → 金山 → 名城線 → 榮</div><div class="ti"><div class="tr2">預計班次：20:48 發（特急約35分）→ 金山轉名城線右回り → 榮（約5分）</div><div class="tb">▸ 備用班次：21:18 發</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">21:45</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">🏨 飯店 Check-in <a class="ml" href="https://maps.google.com/?q=VESSEL+INN+SAKAE+STATION+名古屋市栄" target="_blank">📍 地圖</a></div><div class="id">榮站1號出口步行 2+15=17分・Check-in 預留 1 小時</div><div class="nb"><div class="tr2">💡 今晚抵達較晚，安頓休息即可。明日行程豐富，早點就寢！</div></div></div></div>
+</div></div>
+<div class="sb"><span class="si2">✈️ 落地 18:45</span><span class="si2">·</span><span class="si2">🚆 市區 約 21:30</span><span class="si2">·</span><span class="si2">🏨 Check-in 約 21:45</span></div>
+</div>
+
+<!-- DAY 2 -->
+<div class="day-card">
+<div class="day-accent"></div>
+<div class="day-header" onclick="togDay('dy2')">
+  <div class="day-left"><div class="day-num">02</div><div class="day-info"><div class="day-date">9月6日（日）</div><div class="day-title">熱田神宮・鰻魚飯・岐阜・長良川鵜飼</div></div></div>
+  <span class="chevron" id="ch-dy2">▾</span>
+</div>
+<div class="day-body open" id="dy2"><div class="tl">
+<div class="row"><div class="tc"><span class="tm">08:30</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">出門・步行至榮站</div><div class="id">飯店 → 榮站：2+15=17分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">08:47</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 地鐵名城線 → 神宮傳馬町站</div><div class="ti"><div class="tr2">名城線右回り・榮 → 神宮傳馬町（約8分）</div><div class="tr2">預計班次：08:50 發 → 08:58 抵</div><div class="tb">▸ 備用班次：09:00 發（班距約3分）</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">09:00</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">⛩️ 熱田神宮 <a class="ml" href="https://maps.google.com/?q=熱田神宮+名古屋市熱田区神宮1丁目1-1" target="_blank">📍 地圖</a></div><div class="id">步行至神宮：約1+15=16分・草薙劍・千年大楠樹・心之小徑・停留 1.5 小時</div></div></div>
+<div class="row"><div class="tc"><span class="tm">10:30</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🦀 蓬萊軒神宮店 領號碼牌 <a class="ml" href="https://maps.google.com/?q=あつた蓬莱軒+神宮店+名古屋市熱田区神宮2丁目10-26" target="_blank">📍 地圖</a></div><div class="id">步行至神宮正門旁神宮店（約1分）・10:30 開始領號</div><div class="nb"><div class="tr2">💡 領完號碼牌後可附近稍作等候，依叫號時間入座，預計 11:30 前後用餐。</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">11:30</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🍱 鰻魚飯三吃 ひつまぶし <a class="ml" href="https://maps.google.com/?q=あつた蓬莱軒+神宮店+名古屋市熱田区神宮2丁目10-26" target="_blank">📍 地圖</a></div><div class="id">依號碼牌入座・90分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">13:00</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 步行返站・前往岐阜</div><div class="id">步行 5+15=20分 → 名城線 → 金山 → 名鐵特急</div><div class="ti"><div class="tr2">預計班次：13:24 金山發 → 13:54 名鐵岐阜抵</div><div class="tb">▸ 備用班次：13:54 金山發</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">13:54</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚌 岐阜バス → 岐阜公園 <a class="ml" href="https://maps.google.com/?q=岐阜公園+岐阜市大宮町1丁目46" target="_blank">📍 地圖</a></div><div class="ti"><div class="tr2">名鐵岐阜站前 → 岐阜公園歷史博物館前（約15分）</div><div class="tr2">預計班次：14:00 發 → 14:15 抵・步行至纜車站 +15分</div><div class="tb">▸ 備用班次：14:20 發</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">14:45</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🏯 岐阜城（含金華山纜車） <a class="ml" href="https://maps.google.com/?q=岐阜城+岐阜市天守閣18" target="_blank">📍 地圖</a></div><div class="id">纜車來回 + 天守閣 + 景觀台・停留 1.5 小時</div><div class="is">纜車 09:00–17:30・往返 ¥1,100</div></div></div>
+<div class="row"><div class="tc"><span class="tm">16:15</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🏘️ 川原町老街散策 <a class="ml" href="https://maps.google.com/?q=川原町+岐阜市大縄場1丁目" target="_blank">📍 地圖</a></div><div class="id">纜車站步行：15+15=30分 → 長良川畔老屋・茶屋・停留 45分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">17:30</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🚢 長良川鵜飼乘船處 <a class="ml" href="https://maps.google.com/?q=長良川鵜飼観覧船乗船場+岐阜市湊町1丁目" target="_blank">📍 地圖</a></div><div class="id">川原町步行：10+15=25分 → 提前到場取票</div><div class="wb"><div class="tr2">⚠️ 9月6日（通常日）大人 ¥4,200・9月熱門場次請盡早預訂！ukai-gifucity.jp</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">18:15</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🚢 長良川鵜飼出船 + 🍱 晚餐（船上）</div><div class="id">1,300 年傳統鸕鶿捕魚・含船上晚餐・約 2.5 小時</div></div></div>
+<div class="row"><div class="tc"><span class="tm">20:30</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 返回名古屋</div><div class="id">步行至公車站（+15分）→ 名鐵岐阜 → 金山 → 榮</div><div class="ti"><div class="tr2">預計班次：約 20:50 名鐵岐阜發 → 21:25 金山 → 21:30 榮</div><div class="tb">▸ 備用班次：21:20 名鐵岐阜發</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">21:47</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">🏨 返回飯店</div><div class="id">榮站步行 17分</div></div></div>
+</div></div>
+<div class="sb"><span class="si2">⛩️ 熱田神宮 09:00</span><span class="si2">·</span><span class="si2">🍱 鰻魚飯 約11:30</span><span class="si2">·</span><span class="si2">🏯 岐阜城 14:45</span><span class="si2">·</span><span class="si2">🚢 鵜飼 18:15</span></div>
+</div>
+
+<!-- DAY 3 -->
+<div class="day-card">
+<div class="day-accent"></div>
+<div class="day-header" onclick="togDay('dy3')">
+  <div class="day-left"><div class="day-num">03</div><div class="day-info"><div class="day-date">9月7日（一）平日</div><div class="day-title">吉卜力公園・一整天</div></div></div>
+  <span class="chevron" id="ch-dy3">▾</span>
+</div>
+<div class="day-body" id="dy3"><div class="tl">
+<div class="row"><div class="tc"><span class="tm">08:20</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">出門・步行至榮站</div><div class="id">飯店 → 榮站：2+15=17分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">08:37</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 東山線 榮 → 藤之丘</div><div class="ti"><div class="tr2">東山線往藤之丘・約20分</div><div class="tr2">預計班次：08:40 發 → 09:00 藤之丘抵</div><div class="tb">▸ 備用班次：08:45 發（班距約3-5分）</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">09:00</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 Linimo 磁浮 → 愛・地球博紀念公園站</div><div class="ti"><div class="tr2">藤之丘 → 愛・地球博紀念公園・約17分</div><div class="tr2">預計班次：09:05 發 → 09:22 抵</div><div class="tb">▸ 備用班次：09:15 發（約每10分一班）</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">09:22</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">步行至吉卜力公園入口</div><div class="id">公園站 → 入口：約10+15=25分・09:40 前抵達排隊</div></div></div>
+<div class="row"><div class="tc"><span class="tm">09:40</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🌿 吉卜力公園 入口排隊</div><div class="id">提前到場排隊・準備 10:00 準時入場</div><div class="wb"><div class="tr2">⚠️ 搶票：7/10 台灣時間 13:00 準時開賣9月場次・全預約制無現場售票・需指定大倉庫入場時段</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">10:00</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🌿 正式入場 <a class="ml" href="https://maps.google.com/?q=ジブリパーク+愛知県長久手市茨ケ廻間乙1533-1" target="_blank">📍 地圖</a></div><div class="id">Premium 大散步券・全5區：吉卜力大倉庫・魔女之谷・魔法之里・青春之丘・動動力森林</div></div></div>
+<div class="row"><div class="tc"><span class="tm">12:30</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🍱 午餐・園區內・90分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">14:00</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">繼續探索各區・至 17:30</div></div></div>
+<div class="row"><div class="tc"><span class="tm">17:30</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">步行至公園站・返回名古屋</div><div class="id">出口 → 公園站：約10+15=25分</div><div class="ti"><div class="tr2">預計班次：18:00 公園站發 → 18:17 藤之丘 → 18:40 榮抵</div><div class="tb">▸ 備用班次：18:10 公園站發</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">18:40</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🍜 晚餐・榮周邊・90分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">20:10</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">🏨 返回飯店・步行 17分・預計 20:27 抵</div></div></div>
+</div></div>
+<div class="sb"><span class="si2">🚆 出發 08:20</span><span class="si2">·</span><span class="si2">🌿 排隊 09:40</span><span class="si2">·</span><span class="si2">🎪 入場 10:00</span><span class="si2">·</span><span class="si2">🏨 返飯店 約 20:27</span></div>
+</div>
+
+<!-- DAY 4 -->
+<div class="day-card">
+<div class="day-accent"></div>
+<div class="day-header" onclick="togDay('dy4')">
+  <div class="day-left"><div class="day-num">04</div><div class="day-info"><div class="day-date">9月8日（二）</div><div class="day-title">清洲城・大須・手羽先・榮夜景</div></div></div>
+  <span class="chevron" id="ch-dy4">▾</span>
+</div>
+<div class="day-body" id="dy4"><div class="tl">
+<div class="row"><div class="tc"><span class="tm">08:30</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">出門・步行至榮站</div><div class="id">飯店 → 榮站：2+15=17分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">08:47</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 名城線 → 金山・轉名鐵往新清洲</div><div class="ti"><div class="tr2">名城線右回り → 金山（約5分）→ 名鐵本線特急往岐阜方向</div><div class="tr2">預計班次：08:50 榮發 → 08:55 金山 → 09:04 新清洲抵</div><div class="tb">▸ 備用班次：09:20 金山發（名鐵特急約30分一班）</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">09:04</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">步行至清洲城 <a class="ml" href="https://maps.google.com/?q=清洲城+愛知県清須市朝日城屋敷1-1" target="_blank">📍 地圖</a></div><div class="id">新清洲站 → 清洲城：20+15=35分・五條川沿岸散步</div></div></div>
+<div class="row"><div class="tc"><span class="tm">09:39</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🏯 清洲城 <a class="ml" href="https://maps.google.com/?q=清洲城+愛知県清須市朝日城屋敷1-1" target="_blank">📍 地圖</a></div><div class="id">織田信長居城・戰國史展示・甲冑試著・停留 1 小時</div><div class="is">開放：09:00–16:30・入場費 ¥400</div></div></div>
+<div class="row"><div class="tc"><span class="tm">10:39</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 步行返新清洲站・搭名鐵回市區</div><div class="id">城 → 新清洲站：20+15=35分</div><div class="ti"><div class="tr2">預計班次：11:15 新清洲發 → 11:35 金山 → 轉地鐵至上前津站</div><div class="tb">▸ 備用班次：11:45 新清洲發</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">11:50</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">上前津站 → 步行至大須商店街</div><div class="id">約 5+15=20分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">12:10</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🍱 午餐・大須 <a class="ml" href="https://maps.google.com/?q=矢場とん+大須本店+名古屋市中区大須3丁目" target="_blank">📍 矢場豬排</a> <a class="ml" href="https://maps.google.com/?q=コンパル+大須本店+名古屋市中区大須3丁目" target="_blank">📍 KONPARU</a></div><div class="id">矢場味噌豬排・KONPARU 炸蝦三明治・Solo Pizza 任選・90分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">13:40</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🛍️ 大須商店街 <a class="ml" href="https://maps.google.com/?q=大須商店街+名古屋市中区大須2丁目" target="_blank">📍 地圖</a> <a class="ml" href="https://maps.google.com/?q=大須観音+名古屋市中区大須2丁目21-47" target="_blank">📍 大須觀音</a> <a class="ml" href="https://maps.google.com/?q=万松寺+名古屋市中区大須3丁目29-12" target="_blank">📍 萬松寺</a></div><div class="id">古著・電器・藥妝・挖寶・停留 2 小時</div></div></div>
+<div class="row"><div class="tc"><span class="tm">15:40</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">步行至矢場町站・地鐵往榮</div><div class="id">大須 → 矢場町站：約8+15=23分</div><div class="ti"><div class="tr2">名城線 → 榮站（1站約2分）</div><div class="tr2">預計班次：16:05 矢場町發 → 16:07 榮抵</div><div class="tb">▸ 備用班次：16:10 發</div></div></div></div>
+<div class="row"><div class="tc"><span class="tm">16:20</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🍗 晚餐・世界的山將 手羽先 <a class="ml" href="https://maps.google.com/?q=世界の山ちゃん+本店+名古屋市中区栄4丁目" target="_blank">📍 本店地圖</a></div><div class="id">名古屋名物手羽先・搭配生啤・90分</div></div></div>
+<div class="row"><div class="tc"><span class="tm">17:50</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🌃 綠洲21 + MIRAI 電視塔夜景 <a class="ml" href="https://maps.google.com/?q=オアシス21+名古屋市東区東桜1丁目11-1" target="_blank">📍 綠洲21</a> <a class="ml" href="https://maps.google.com/?q=中部電力MIRAIタワー+名古屋市中区錦3丁目6-15" target="_blank">📍 電視塔</a></div><div class="id">水之宇宙飛船夜間燈光・電視塔觀景台（¥1,300）・停留 1.5 小時</div></div></div>
+<div class="row"><div class="tc"><span class="tm">19:20</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">🏨 返回飯店・步行 17分・預計 19:37 抵</div><div class="id">今晚整理行李備明日出發京都</div><div class="nb"><div class="tr2">📌 9/9 出發京都：確認新幹線班次・行李可寄存名古屋站・記得 checkout</div></div></div></div>
+</div></div>
+<div class="sb"><span class="si2">🏯 清洲城 09:39</span><span class="si2">·</span><span class="si2">🛍️ 大須 13:40</span><span class="si2">·</span><span class="si2">🍗 手羽先 16:20</span><span class="si2">·</span><span class="si2">🌃 夜景 17:50</span></div>
+</div>
+</div>
+
+<!-- ══════════════ BUDGET ══════════════ -->
+<div class="panel" id="tab-budget">
+
+<div class="bud-summary">
+  <div class="bud-summary-title">💴 總覽</div>
+  <div id="bud-summary-rows"></div>
+  <div class="bud-summary-row"><span class="bud-total-label">旅行總計</span><span class="bud-total-val" id="bud-grand-total">¥0</span></div>
+</div>
+
+<div class="bud-sync-bar">
+  <span class="bud-sync-status" id="sync-status">⟳ 載入中...</span>
+  <button class="bud-sync-btn" onclick="fetchEntries()">重新整理</button>
+</div>
+
+<div class="bud-add-form">
+  <div class="bud-form-title">＋ 新增花費</div>
+  <div class="bud-form-row">
+    <select id="f-day" class="bud-input">
+      <option value="9月5日">9/5 抵達日</option>
+      <option value="9月6日">9/6 熱田・岐阜・鵜飼</option>
+      <option value="9月7日">9/7 吉卜力</option>
+      <option value="9月8日">9/8 清洲・大須・榮</option>
+    </select>
+    <select id="f-who" class="bud-input">
+      <option value="Emma">Emma</option>
+      <option value="旅伴">旅伴</option>
+    </select>
+  </div>
+  <div class="bud-form-row">
+    <input type="text" id="f-item" class="bud-input" placeholder="項目（如：鵜飼船票）">
+    <input type="number" id="f-amount" class="bud-input" placeholder="金額 ¥" min="0">
+  </div>
+  <input type="text" id="f-note" class="bud-input" placeholder="備註（選填）" style="width:100%;margin-top:6px">
+  <button class="bud-submit-btn" onclick="addEntry()">送出</button>
+</div>
+
+<div id="bud-entries"></div>
+
+</div>
+
+<!-- ══════════════ CHECKLIST ══════════════ -->
+<div class="panel" id="tab-checklist">
+<div class="cl-progress">
+  <div class="cl-prog-bar-wrap"><div class="cl-prog-bar" id="cl-bar" style="width:0%"></div></div>
+  <span class="cl-prog-text" id="cl-prog-text">0 / 0 項已勾選</span>
+</div>
+<div id="cl-content">
+  <div class="cl-section-card">
+    <div class="cl-section-title">📋 清單尚未設定</div>
+    <div style="font-size:13px;color:var(--text3);padding:8px 0">請告訴我需要攜帶的品項，我來幫你加進來。</div>
+  </div>
+</div>
+</div>
+
+<script>
+function switchTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function togDay(id){
+  var b=document.getElementById(id),c=document.getElementById('ch-'+id);
+  b.classList.contains('open')?(b.classList.remove('open'),c.classList.remove('open')):(b.classList.add('open'),c.classList.add('open'));
+}
+// BUDGET — Google Sheet sync
+var API_URL='https://script.google.com/macros/s/AKfycbyp_BjclXP-0xzx7AqvP1I7sKDa9vgHnmBXn5fekQqvHa7APNmZD-wveJI-qJk6Q3LLzg/exec';
+var DAY_LABELS={'9月5日':'9/5 抵達日','9月6日':'9/6 熱田・岐阜・鵜飼','9月7日':'9/7 吉卜力','9月8日':'9/8 清洲・大須・榮'};
+var DAY_ORDER=['9月5日','9月6日','9月7日','9月8日'];
+var allEntries=[];
+
+function setStatus(msg,cls){
+  var el=document.getElementById('sync-status');
+  if(!el)return;
+  el.textContent=msg;
+  el.className='bud-sync-status'+(cls?' '+cls:'');
+}
+
+function fetchEntries(){
+  setStatus('⟳ 同步中...');
+  fetch(API_URL)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.success){
+        allEntries=data.data||[];
+        renderEntries();
+        setStatus('✓ 已同步 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),'ok');
+      } else {
+        setStatus('✗ 載入失敗','err');
+      }
+    })
+    .catch(function(){setStatus('✗ 網路錯誤','err');});
+}
+
+function addEntry(){
+  var day=document.getElementById('f-day').value;
+  var who=document.getElementById('f-who').value;
+  var item=document.getElementById('f-item').value.trim();
+  var amount=document.getElementById('f-amount').value;
+  var note=document.getElementById('f-note').value.trim();
+  if(!item||!amount){alert('請填寫項目和金額');return;}
+  var btn=document.querySelector('.bud-submit-btn');
+  btn.disabled=true;btn.textContent='送出中...';
+  fetch(API_URL,{
+    method:'POST',
+    body:JSON.stringify({action:'add',date:day,who:who,item:item,amount:parseFloat(amount),note:note})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.success){
+      document.getElementById('f-item').value='';
+      document.getElementById('f-amount').value='';
+      document.getElementById('f-note').value='';
+      fetchEntries();
+    } else {alert('送出失敗，請再試一次');}
+    btn.disabled=false;btn.textContent='送出';
+  })
+  .catch(function(){alert('網路錯誤，請再試一次');btn.disabled=false;btn.textContent='送出';});
+}
+
+function renderEntries(){
+  var container=document.getElementById('bud-entries');
+  if(!container)return;
+  container.innerHTML='';
+  var byDay={};
+  allEntries.forEach(function(e){
+    var d=e['日期']||'其他';
+    if(!byDay[d])byDay[d]=[];
+    byDay[d].push(e);
+  });
+  var grand=0;
+  var summaryByDay={};
+  DAY_ORDER.forEach(function(day){
+    var entries=byDay[day]||[];
+    var dayTotal=entries.reduce(function(s,e){return s+(parseFloat(e['金額(¥)'])||0);},0);
+    grand+=dayTotal;
+    summaryByDay[day]=dayTotal;
+    var section=document.createElement('div');
+    section.className='bud-day-section';
+    section.innerHTML='<div class="bud-day-hd2"><span class="bud-day-label">'+(DAY_LABELS[day]||day)+'</span><span class="bud-day-amt">¥'+dayTotal.toLocaleString()+'</span></div>';
+    if(!entries.length){
+      section.innerHTML+='<div class="bud-empty">尚無紀錄</div>';
+    } else {
+      entries.forEach(function(e){
+        var who=e['誰付']||'';
+        var whoClass=who==='Emma'?'emma':'partner';
+        var item=e['項目']||'';
+        var note=e['備註']||'';
+        var amt=parseFloat(e['金額(¥)'])||0;
+        var row=document.createElement('div');
+        row.className='bud-entry';
+        row.innerHTML='<span class="bud-entry-who '+whoClass+'">'+who+'</span>'+
+          '<div class="bud-entry-info"><div class="bud-entry-item">'+item+'</div>'+(note?'<div class="bud-entry-note">'+note+'</div>':'')+'</div>'+
+          '<span class="bud-entry-amt">¥'+amt.toLocaleString()+'</span>';
+        section.appendChild(row);
+      });
+    }
+    container.appendChild(section);
+  });
+  // update summary
+  var sr=document.getElementById('bud-summary-rows');
+  if(sr){
+    var html='';
+    DAY_ORDER.forEach(function(day){
+      html+='<div class="bud-summary-row"><span class="bud-summary-label">'+(DAY_LABELS[day]||day)+'</span><span class="bud-summary-val">¥'+(summaryByDay[day]||0).toLocaleString()+'</span></div>';
+    });
+    sr.innerHTML=html;
+  }
+  var gt=document.getElementById('bud-grand-total');
+  if(gt)gt.textContent='¥'+grand.toLocaleString();
+}
+
+fetchEntries();
+setInterval(fetchEntries,60000);
+// CHECKLIST
+var clData=[];
+function saveChecklist(){try{localStorage.setItem('nagoya_checklist',JSON.stringify(clData));}catch(e){}}
+function loadChecklist(){try{var s=localStorage.getItem('nagoya_checklist');if(s)clData=JSON.parse(s);}catch(e){}}
+function renderChecklist(){
+  var content=document.getElementById('cl-content');
+  if(!clData.length){content.innerHTML='<div class="cl-section-card"><div class="cl-section-title">📋 清單尚未設定</div><div style="font-size:13px;color:var(--text3);padding:8px 0">請告訴我需要攜帶的品項，我來幫你加進來。</div></div>';updateClProg();return;}
+  var sections={};
+  clData.forEach(function(item){if(!sections[item.cat])sections[item.cat]=[];sections[item.cat].push(item);});
+  var html='';
+  Object.keys(sections).forEach(function(cat){
+    html+='<div class="cl-section-card"><div class="cl-section-title">'+cat+'</div>';
+    sections[cat].forEach(function(item){html+='<div class="cl-item" onclick="togCl(\''+item.id+'\')"><div class="cl-cb'+(item.checked?' checked':'')+'" id="clcb-'+item.id+'"></div><span class="cl-label'+(item.checked?' checked':'')+'" id="cllt-'+item.id+'">'+item.name+'</span></div>';});
+    html+='</div>';
+  });
+  content.innerHTML=html;updateClProg();
+}
+function togCl(id){
+  var item=clData.find(function(i){return i.id===id;});if(!item)return;
+  item.checked=!item.checked;
+  var cb=document.getElementById('clcb-'+id),lt=document.getElementById('cllt-'+id);
+  if(cb)cb.className='cl-cb'+(item.checked?' checked':'');
+  if(lt)lt.className='cl-label'+(item.checked?' checked':'');
+  updateClProg();saveChecklist();
+}
+function updateClProg(){
+  var tot=clData.length,done=clData.filter(function(i){return i.checked;}).length;
+  var pct=tot>0?Math.round(done/tot*100):0;
+  var bar=document.getElementById('cl-bar'),txt=document.getElementById('cl-prog-text');
+  if(bar)bar.style.width=pct+'%';if(txt)txt.textContent=done+' / '+tot+' 項已勾選';
+}
+loadChecklist();
+renderChecklist();
+</script>
+</body>
+</html>
