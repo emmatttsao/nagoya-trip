@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -434,7 +435,7 @@ function setStatus(msg,cls){
 
 function fetchEntries(){
   setStatus('⟳ 同步中...');
-  fetch(API_URL)
+  fetch(API_URL+'?t='+Date.now())
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.success){
@@ -445,7 +446,7 @@ function fetchEntries(){
         setStatus('✗ 載入失敗','err');
       }
     })
-    .catch(function(){setStatus('✗ 網路錯誤','err');});
+    .catch(function(){setStatus('✗ 網路錯誤，請點重新整理','err');});
 }
 
 function addEntry(){
@@ -457,19 +458,22 @@ function addEntry(){
   if(!item||!amount){alert('請填寫項目和金額');return;}
   var btn=document.querySelector('.bud-submit-btn');
   btn.disabled=true;btn.textContent='送出中...';
-  fetch(API_URL,{
-    method:'POST',
-    body:JSON.stringify({action:'add',date:day,who:who,item:item,amount:parseFloat(amount),note:note})
-  })
-  .then(function(r){return r.json();})
-  .then(function(data){
-    if(data.success){
-      document.getElementById('f-item').value='';
-      document.getElementById('f-amount').value='';
-      document.getElementById('f-note').value='';
-      fetchEntries();
-    } else {alert('送出失敗，請再試一次');}
+  // Use no-cors with form data to bypass CORS restriction
+  var form=new FormData();
+  form.append('action','add');
+  form.append('date',day);
+  form.append('who',who);
+  form.append('item',item);
+  form.append('amount',parseFloat(amount));
+  form.append('note',note);
+  fetch(API_URL,{method:'POST',body:form,mode:'no-cors'})
+  .then(function(){
+    document.getElementById('f-item').value='';
+    document.getElementById('f-amount').value='';
+    document.getElementById('f-note').value='';
     btn.disabled=false;btn.textContent='送出';
+    setStatus('✓ 已送出，2秒後重新整理...','ok');
+    setTimeout(fetchEntries,2000);
   })
   .catch(function(){alert('網路錯誤，請再試一次');btn.disabled=false;btn.textContent='送出';});
 }
