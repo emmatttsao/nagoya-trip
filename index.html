@@ -435,18 +435,22 @@ function setStatus(msg,cls){
 
 function fetchEntries(){
   setStatus('⟳ 同步中...');
-  fetch(API_URL+'?t='+Date.now())
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(data.success){
-        allEntries=data.data||[];
-        renderEntries();
-        setStatus('✓ 已同步 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),'ok');
-      } else {
-        setStatus('✗ 載入失敗','err');
-      }
-    })
-    .catch(function(){setStatus('✗ 網路錯誤，請點重新整理','err');});
+  var cb='cb'+Date.now();
+  var script=document.createElement('script');
+  window[cb]=function(data){
+    delete window[cb];
+    document.body.removeChild(script);
+    if(data.success){
+      allEntries=data.data||[];
+      renderEntries();
+      setStatus('✓ 已同步 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),'ok');
+    } else {
+      setStatus('✗ 載入失敗','err');
+    }
+  };
+  script.src=API_URL+'?callback='+cb+'&t='+Date.now();
+  script.onerror=function(){setStatus('✗ 網路錯誤，請點重新整理','err');};
+  document.body.appendChild(script);
 }
 
 function addEntry(){
@@ -458,10 +462,11 @@ function addEntry(){
   if(!item||!amount){alert('請填寫項目和金額');return;}
   var btn=document.querySelector('.bud-submit-btn');
   btn.disabled=true;btn.textContent='送出中...';
-  var url=API_URL+'?action=add&date='+encodeURIComponent(day)+'&who='+encodeURIComponent(who)+'&item='+encodeURIComponent(item)+'&amount='+encodeURIComponent(amount)+'&note='+encodeURIComponent(note);
-  fetch(url)
-  .then(function(r){return r.json();})
-  .then(function(data){
+  var cb='cb'+Date.now();
+  var script=document.createElement('script');
+  window[cb]=function(data){
+    delete window[cb];
+    document.body.removeChild(script);
     if(data.success){
       document.getElementById('f-item').value='';
       document.getElementById('f-amount').value='';
@@ -472,8 +477,10 @@ function addEntry(){
       alert('送出失敗，請再試一次');
     }
     btn.disabled=false;btn.textContent='送出';
-  })
-  .catch(function(){alert('網路錯誤，請再試一次');btn.disabled=false;btn.textContent='送出';});
+  };
+  script.onerror=function(){alert('網路錯誤，請再試一次');btn.disabled=false;btn.textContent='送出';};
+  script.src=API_URL+'?callback='+cb+'&action=add&date='+encodeURIComponent(day)+'&who='+encodeURIComponent(who)+'&item='+encodeURIComponent(item)+'&amount='+encodeURIComponent(amount)+'&note='+encodeURIComponent(note);
+  document.body.appendChild(script);
 }
 
 function renderEntries(){
