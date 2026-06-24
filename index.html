@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -248,6 +249,19 @@ body {
 .bud-entry-note { font-size:11px; color:var(--text3); margin-top:1px; }
 .bud-entry-amt { font-size:13px; font-weight:600; color:var(--text1); white-space:nowrap; }
 .bud-empty { font-size:12px; color:var(--text4); padding:12px 16px; text-align:center; }
+.bud-entry-actions { display:flex; flex-direction:column; gap:3px; margin-left:4px; flex-shrink:0; }
+.bud-action-btn { background:none; border:none; cursor:pointer; font-size:14px; padding:2px 4px; line-height:1; opacity:.5; -webkit-tap-highlight-color:transparent; }
+.bud-action-btn:active { opacity:1; }
+
+/* ── EDIT MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; display:none; align-items:center; justify-content:center; padding:16px; }
+.modal-overlay.open { display:flex; }
+.modal-box { background:var(--bg2); border-radius:16px; padding:20px; width:100%; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.2); }
+.modal-title { font-size:15px; font-weight:700; color:var(--text1); margin-bottom:14px; }
+.modal-footer { display:flex; gap:8px; margin-top:14px; }
+.modal-cancel { flex:1; padding:10px; background:var(--bg4); color:var(--text2); border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
+.modal-save { flex:2; padding:10px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
+.modal-save:disabled { opacity:.5; cursor:default; }
 </style>
 </head>
 <body>
@@ -409,6 +423,35 @@ body {
 </div>
 </div>
 
+<!-- ══════════════ EDIT MODAL ══════════════ -->
+<div class="modal-overlay" id="edit-modal" onclick="if(event.target===this)closeEdit()">
+  <div class="modal-box">
+    <div class="modal-title">✏️ 修改花費</div>
+    <input type="hidden" id="e-row">
+    <div class="bud-form-row">
+      <select id="e-day" class="bud-input">
+        <option value="9月5日">9/5 抵達日</option>
+        <option value="9月6日">9/6 熱田・岐阜・鵜飼</option>
+        <option value="9月7日">9/7 吉卜力</option>
+        <option value="9月8日">9/8 清洲・大須・榮</option>
+      </select>
+      <select id="e-who" class="bud-input">
+        <option value="Emma">Emma</option>
+        <option value="旅伴">旅伴</option>
+      </select>
+    </div>
+    <div class="bud-form-row">
+      <input type="text" id="e-item" class="bud-input" placeholder="項目">
+      <input type="number" id="e-amount" class="bud-input" placeholder="金額 ¥" min="0">
+    </div>
+    <input type="text" id="e-note" class="bud-input" placeholder="備註（選填）" style="width:100%;margin-top:6px">
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeEdit()">取消</button>
+      <button class="modal-save" id="e-save-btn" onclick="saveEdit()">儲存</button>
+    </div>
+  </div>
+</div>
+
 <script>
 function switchTab(id,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -516,7 +559,11 @@ function renderEntries(){
         row.className='bud-entry';
         row.innerHTML='<span class="bud-entry-who '+whoClass+'">'+who+'</span>'+
           '<div class="bud-entry-info"><div class="bud-entry-item">'+item+'</div>'+(note?'<div class="bud-entry-note">'+note+'</div>':'')+'</div>'+
-          '<span class="bud-entry-amt">¥'+amt.toLocaleString()+'</span>';
+          '<span class="bud-entry-amt">¥'+amt.toLocaleString()+'</span>'+
+          '<div class="bud-entry-actions">'+
+          '<button class="bud-action-btn" onclick="editEntry('+e._row+',event)" title="編輯">✏️</button>'+
+          '<button class="bud-action-btn" onclick="deleteEntry('+e._row+',event)" title="刪除">🗑️</button>'+
+          '</div>';
         section.appendChild(row);
       });
     }
@@ -533,6 +580,62 @@ function renderEntries(){
   }
   var gt=document.getElementById('bud-grand-total');
   if(gt)gt.textContent='¥'+grand.toLocaleString();
+}
+
+function deleteEntry(row,evt){
+  evt.stopPropagation();
+  if(!confirm('確定要刪除這筆紀錄嗎？'))return;
+  var cb='cb'+Date.now();
+  var script=document.createElement('script');
+  window[cb]=function(data){delete window[cb];document.body.removeChild(script);
+    if(data.success){setStatus('✓ 已刪除，重新整理中...','ok');setTimeout(fetchEntries,1000);}
+    else{alert('刪除失敗，請再試一次');}
+  };
+  script.onerror=function(){alert('網路錯誤，請再試一次');};
+  script.src=API_URL+'?callback='+cb+'&action=delete&row='+row+'&t='+Date.now();
+  document.body.appendChild(script);
+}
+
+function editEntry(row,evt){
+  evt.stopPropagation();
+  var e=allEntries.find(function(x){return x._row===row;});
+  if(!e)return;
+  document.getElementById('e-row').value=row;
+  document.getElementById('e-day').value=e['日期']||'9月5日';
+  document.getElementById('e-who').value=e['誰付']||'Emma';
+  document.getElementById('e-item').value=e['項目']||'';
+  document.getElementById('e-amount').value=e['金額(¥)']||'';
+  document.getElementById('e-note').value=e['備註']||'';
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEdit(){
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+function saveEdit(){
+  var row=document.getElementById('e-row').value;
+  var day=document.getElementById('e-day').value;
+  var who=document.getElementById('e-who').value;
+  var item=document.getElementById('e-item').value.trim();
+  var amount=document.getElementById('e-amount').value;
+  var note=document.getElementById('e-note').value.trim();
+  if(!item||!amount){alert('請填寫項目和金額');return;}
+  var btn=document.getElementById('e-save-btn');
+  btn.disabled=true;btn.textContent='儲存中...';
+  var cb='cb'+Date.now();
+  var script=document.createElement('script');
+  window[cb]=function(data){delete window[cb];document.body.removeChild(script);
+    btn.disabled=false;btn.textContent='儲存';
+    if(data.success){closeEdit();setStatus('✓ 已更新，重新整理中...','ok');setTimeout(fetchEntries,1000);}
+    else{alert('更新失敗，請再試一次');}
+  };
+  script.onerror=function(){alert('網路錯誤');btn.disabled=false;btn.textContent='儲存';};
+  script.src=API_URL+'?callback='+cb+'&action=update&row='+row+
+    '&date='+encodeURIComponent(day)+'&who='+encodeURIComponent(who)+
+    '&item='+encodeURIComponent(item)+'&amount='+encodeURIComponent(amount)+
+    '&note='+encodeURIComponent(note)+'&t='+Date.now();
+  document.body.appendChild(script);
 }
 
 fetchEntries();
