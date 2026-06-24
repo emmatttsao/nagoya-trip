@@ -202,19 +202,28 @@ body {
 .bud-total-val { font-size: 16px; font-weight: 700; color: var(--accent); }
 
 /* ── CHECKLIST ── */
-.cl-progress { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 14px; }
-.cl-prog-bar-wrap { flex: 1; height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
-.cl-prog-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
-.cl-prog-text { font-size: 12px; color: var(--text3); white-space: nowrap; }
-.cl-section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
-.cl-section-title { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: .07em; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border2); text-transform: uppercase; }
-.cl-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: .5px solid var(--border2); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cl-person-block { margin-bottom: 16px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card-bg); }
+.cl-person-hd { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--bg3); border-bottom:1px solid var(--border); }
+.cl-person-name { font-size:13px; font-weight:700; color:var(--text1); }
+.cl-person-prog { font-size:12px; color:var(--text3); }
+.cl-add-row { display:flex; gap:8px; padding:10px 16px; border-bottom:1px solid var(--border2); }
+.cl-add-input { flex:1; border:1px solid var(--border); border-radius:8px; padding:7px 10px; font-size:13px; background:var(--bg3); color:var(--text1); outline:none; font-family:inherit; min-width:0; }
+.cl-add-input:focus { border-color:var(--accent); background:var(--bg2); }
+.cl-add-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; }
+.cl-add-btn:active { opacity:.85; }
+.cl-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: .5px solid var(--border2); }
 .cl-item:last-child { border: none; }
-.cl-cb { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--text4); background: var(--bg3); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.cl-cb { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--text4); background: var(--bg3); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; cursor:pointer; }
 .cl-cb.checked { background: var(--accent); border-color: var(--accent); }
 .cl-cb.checked::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
-.cl-label { font-size: 13px; color: var(--text1); flex: 1; }
+.cl-label { font-size: 13px; color: var(--text1); flex: 1; cursor:pointer; }
 .cl-label.checked { color: var(--text4); text-decoration: line-through; }
+.cl-item-actions { display:flex; gap:2px; flex-shrink:0; }
+.cl-empty { font-size:12px; color:var(--text4); padding:12px 16px; text-align:center; }
+.cl-sync-bar { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; margin-bottom:12px; }
+.cl-sync-status { font-size:12px; color:var(--text3); }
+.cl-sync-status.ok { color:var(--green); }
+.cl-sync-status.err { color:var(--red); }
 
 /* ── BUDGET SHEET SYNC ── */
 .bud-sync-bar { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; margin-bottom:12px; }
@@ -415,16 +424,11 @@ body {
 
 <!-- ══════════════ CHECKLIST ══════════════ -->
 <div class="panel" id="tab-checklist">
-<div class="cl-progress">
-  <div class="cl-prog-bar-wrap"><div class="cl-prog-bar" id="cl-bar" style="width:0%"></div></div>
-  <span class="cl-prog-text" id="cl-prog-text">0 / 0 項已勾選</span>
+<div class="cl-sync-bar">
+  <span class="cl-sync-status" id="cl-sync-status">⟳ 載入中...</span>
+  <button class="bud-sync-btn" onclick="fetchChecklist()">重新整理</button>
 </div>
-<div id="cl-content">
-  <div class="cl-section-card">
-    <div class="cl-section-title">📋 清單尚未設定</div>
-    <div style="font-size:13px;color:var(--text3);padding:8px 0">請告訴我需要攜帶的品項，我來幫你加進來。</div>
-  </div>
-</div>
+<div id="cl-content"></div>
 </div>
 
 <!-- ══════════════ EDIT MODAL ══════════════ -->
@@ -650,39 +654,109 @@ function saveEdit(){
 
 fetchEntries();
 setInterval(fetchEntries,60000);
-// CHECKLIST
-var clData=[];
-function saveChecklist(){try{localStorage.setItem('nagoya_checklist',JSON.stringify(clData));}catch(e){}}
-function loadChecklist(){try{var s=localStorage.getItem('nagoya_checklist');if(s)clData=JSON.parse(s);}catch(e){}}
+
+// CHECKLIST — Spreadsheet sync
+var clItems=[];
+var CL_PERSONS=['曹小姐','巫先生'];
+
+function setClStatus(msg,cls){
+  var el=document.getElementById('cl-sync-status');
+  if(!el)return;
+  el.textContent=msg;
+  el.className='cl-sync-status'+(cls?' '+cls:'');
+}
+
+function fetchChecklist(){
+  setClStatus('⟳ 同步中...');
+  var cb='cb'+Date.now();
+  var script=document.createElement('script');
+  window[cb]=function(data){
+    delete window[cb];document.body.removeChild(script);
+    if(data.success){
+      clItems=data.data||[];
+      renderChecklist();
+      setClStatus('✓ 已同步 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),'ok');
+    } else { setClStatus('✗ 載入失敗','err'); }
+  };
+  script.src=API_URL+'?callback='+cb+'&action=cl_fetch&t='+Date.now();
+  script.onerror=function(){setClStatus('✗ 網路錯誤','err');};
+  document.body.appendChild(script);
+}
+
 function renderChecklist(){
   var content=document.getElementById('cl-content');
-  if(!clData.length){content.innerHTML='<div class="cl-section-card"><div class="cl-section-title">📋 清單尚未設定</div><div style="font-size:13px;color:var(--text3);padding:8px 0">請告訴我需要攜帶的品項，我來幫你加進來。</div></div>';updateClProg();return;}
-  var sections={};
-  clData.forEach(function(item){if(!sections[item.cat])sections[item.cat]=[];sections[item.cat].push(item);});
+  if(!content)return;
   var html='';
-  Object.keys(sections).forEach(function(cat){
-    html+='<div class="cl-section-card"><div class="cl-section-title">'+cat+'</div>';
-    sections[cat].forEach(function(item){html+='<div class="cl-item" onclick="togCl(\''+item.id+'\')"><div class="cl-cb'+(item.checked?' checked':'')+'" id="clcb-'+item.id+'"></div><span class="cl-label'+(item.checked?' checked':'')+'" id="cllt-'+item.id+'">'+item.name+'</span></div>';});
+  CL_PERSONS.forEach(function(person){
+    var items=clItems.filter(function(i){return i['誰']===person;});
+    var done=items.filter(function(i){return i['勾選']==='Y';}).length;
+    html+='<div class="cl-person-block">';
+    html+='<div class="cl-person-hd"><span class="cl-person-name">'+person+'</span><span class="cl-person-prog">'+done+' / '+items.length+' 已完成</span></div>';
+    html+='<div class="cl-add-row"><input class="cl-add-input" id="cl-input-'+person+'" placeholder="新增品項..." onkeydown="if(event.key===\'Enter\')addClItem(\''+person+'\')"><button class="cl-add-btn" onclick="addClItem(\''+person+'\')">＋ 新增</button></div>';
+    if(!items.length){
+      html+='<div class="cl-empty">尚無品項，輸入上方新增</div>';
+    } else {
+      items.forEach(function(it){
+        var checked=it['勾選']==='Y';
+        html+='<div class="cl-item">';
+        html+='<div class="cl-cb'+(checked?' checked':'')+'" onclick="togClItem('+it._row+')"></div>';
+        html+='<span class="cl-label'+(checked?' checked':'')+'" onclick="togClItem('+it._row+')">'+it['品項']+'</span>';
+        html+='<div class="cl-item-actions">';
+        html+='<button class="bud-action-btn" onclick="deleteClItem('+it._row+',event)" title="刪除">🗑️</button>';
+        html+='</div></div>';
+      });
+    }
     html+='</div>';
   });
-  content.innerHTML=html;updateClProg();
+  content.innerHTML=html;
 }
-function togCl(id){
-  var item=clData.find(function(i){return i.id===id;});if(!item)return;
-  item.checked=!item.checked;
-  var cb=document.getElementById('clcb-'+id),lt=document.getElementById('cllt-'+id);
-  if(cb)cb.className='cl-cb'+(item.checked?' checked':'');
-  if(lt)lt.className='cl-label'+(item.checked?' checked':'');
-  updateClProg();saveChecklist();
+
+function addClItem(person){
+  var inp=document.getElementById('cl-input-'+person);
+  var name=inp?inp.value.trim():'';
+  if(!name)return;
+  inp.value='';
+  var cb='cb'+Date.now();
+  var script=document.createElement('script');
+  window[cb]=function(data){delete window[cb];document.body.removeChild(script);
+    if(data.success){setTimeout(fetchChecklist,800);}
+    else{alert('新增失敗，請再試一次');}
+  };
+  script.onerror=function(){alert('網路錯誤');};
+  script.src=API_URL+'?callback='+cb+'&action=cl_add&who='+encodeURIComponent(person)+'&item='+encodeURIComponent(name)+'&t='+Date.now();
+  document.body.appendChild(script);
 }
-function updateClProg(){
-  var tot=clData.length,done=clData.filter(function(i){return i.checked;}).length;
-  var pct=tot>0?Math.round(done/tot*100):0;
-  var bar=document.getElementById('cl-bar'),txt=document.getElementById('cl-prog-text');
-  if(bar)bar.style.width=pct+'%';if(txt)txt.textContent=done+' / '+tot+' 項已勾選';
+
+function togClItem(row){
+  var it=clItems.find(function(x){return x._row===row;});
+  if(!it)return;
+  var newVal=it['勾選']==='Y'?'N':'Y';
+  var cb='cb'+Date.now();
+  var script=document.createElement('script');
+  window[cb]=function(data){delete window[cb];document.body.removeChild(script);
+    if(data.success){it['勾選']=newVal;renderChecklist();}
+  };
+  script.onerror=function(){};
+  script.src=API_URL+'?callback='+cb+'&action=cl_toggle&row='+row+'&val='+newVal+'&t='+Date.now();
+  document.body.appendChild(script);
 }
-loadChecklist();
-renderChecklist();
+
+function deleteClItem(row,evt){
+  evt.stopPropagation();
+  if(!confirm('確定要刪除這個品項嗎？'))return;
+  var cb='cb'+Date.now();
+  var script=document.createElement('script');
+  window[cb]=function(data){delete window[cb];document.body.removeChild(script);
+    if(data.success){setTimeout(fetchChecklist,800);}
+    else{alert('刪除失敗，請再試一次');}
+  };
+  script.onerror=function(){alert('網路錯誤');};
+  script.src=API_URL+'?callback='+cb+'&action=cl_delete&row='+row+'&t='+Date.now();
+  document.body.appendChild(script);
+}
+
+fetchChecklist();
+setInterval(fetchChecklist,60000);
 </script>
 </body>
 </html>
