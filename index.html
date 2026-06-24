@@ -268,7 +268,7 @@ body {
 
 <div class="nav">
   <button class="nav-btn active" onclick="switchTab('itinerary',this)">🗓 行程</button>
-  <button class="nav-btn" onclick="switchTab('budget',this)">💴 預算</button>
+  <button class="nav-btn" onclick="switchTab('budget',this)">💴 花費</button>
   <button class="nav-btn" onclick="switchTab('checklist',this)">🧳 攜帶清單</button>
 </div>
 <div class="nav-spacer"></div>
@@ -376,6 +376,10 @@ body {
   <div class="bud-summary-title">💴 總覽</div>
   <div id="bud-summary-rows"></div>
   <div class="bud-summary-row"><span class="bud-total-label">旅行總計</span><span class="bud-total-val" id="bud-grand-total">¥0</span></div>
+  <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--accent-light);">
+    <div class="bud-summary-row"><span class="bud-summary-label">曹小姐 合計</span><span class="bud-summary-val" id="bud-person1-total">¥0</span></div>
+    <div class="bud-summary-row" style="border:none"><span class="bud-summary-label">巫先生 合計</span><span class="bud-summary-val" id="bud-person2-total">¥0</span></div>
+  </div>
 </div>
 
 <div class="bud-sync-bar">
@@ -393,8 +397,8 @@ body {
       <option value="9月8日">9/8 清洲・大須・榮</option>
     </select>
     <select id="f-who" class="bud-input">
-      <option value="Emma">Emma</option>
-      <option value="旅伴">旅伴</option>
+      <option value="曹小姐">曹小姐</option>
+      <option value="巫先生">巫先生</option>
     </select>
   </div>
   <div class="bud-form-row">
@@ -436,8 +440,8 @@ body {
         <option value="9月8日">9/8 清洲・大須・榮</option>
       </select>
       <select id="e-who" class="bud-input">
-        <option value="Emma">Emma</option>
-        <option value="旅伴">旅伴</option>
+        <option value="曹小姐">曹小姐</option>
+        <option value="巫先生">巫先生</option>
       </select>
     </div>
     <div class="bud-form-row">
@@ -551,7 +555,7 @@ function renderEntries(){
     } else {
       entries.forEach(function(e){
         var who=e['誰付']||'';
-        var whoClass=who==='Emma'?'emma':'partner';
+        var whoClass=who==='曹小姐'?'emma':'partner';
         var item=e['項目']||'';
         var note=e['備註']||'';
         var amt=parseFloat(e['金額(¥)'])||0;
@@ -580,6 +584,12 @@ function renderEntries(){
   }
   var gt=document.getElementById('bud-grand-total');
   if(gt)gt.textContent='¥'+grand.toLocaleString();
+  var p1=allEntries.reduce(function(s,e){return e['誰付']==='曹小姐'?s+(parseFloat(e['金額(¥)'])||0):s;},0);
+  var p2=allEntries.reduce(function(s,e){return e['誰付']==='巫先生'?s+(parseFloat(e['金額(¥)'])||0):s;},0);
+  var pt1=document.getElementById('bud-person1-total');
+  var pt2=document.getElementById('bud-person2-total');
+  if(pt1)pt1.textContent='¥'+p1.toLocaleString();
+  if(pt2)pt2.textContent='¥'+p2.toLocaleString();
 }
 
 function deleteEntry(row,evt){
@@ -602,7 +612,7 @@ function editEntry(row,evt){
   if(!e)return;
   document.getElementById('e-row').value=row;
   document.getElementById('e-day').value=e['日期']||'9月5日';
-  document.getElementById('e-who').value=e['誰付']||'Emma';
+  document.getElementById('e-who').value=e['誰付']||'曹小姐';
   document.getElementById('e-item').value=e['項目']||'';
   document.getElementById('e-amount').value=e['金額(¥)']||'';
   document.getElementById('e-note').value=e['備註']||'';
