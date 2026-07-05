@@ -384,10 +384,18 @@ body {
 <div class="bud-summary">
   <div class="bud-summary-title">💴 總覽</div>
   <div id="bud-summary-rows"></div>
-  <div class="bud-summary-row"><span class="bud-total-label">旅行總計</span><span class="bud-total-val" id="bud-grand-total">¥0</span></div>
+  <div class="bud-summary-row"><span class="bud-total-label">旅行總計</span><span style="text-align:right"><div class="bud-total-val" id="bud-grand-jpy">¥0</div><div class="bud-total-val" id="bud-grand-twd" style="font-size:13px;margin-top:2px">NT$0</div></span></div>
   <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--accent-light);">
-    <div class="bud-summary-row"><span class="bud-summary-label">曹小姐 合計</span><span class="bud-summary-val" id="bud-person1-total">¥0</span></div>
-    <div class="bud-summary-row" style="border:none"><span class="bud-summary-label">巫先生 合計</span><span class="bud-summary-val" id="bud-person2-total">¥0</span></div>
+    <div style="margin-bottom:10px">
+      <div class="bud-summary-label" style="font-weight:700;margin-bottom:4px">曹小姐</div>
+      <div class="bud-summary-row"><span class="bud-summary-label">共同花費</span><span class="bud-summary-val" id="bud-p1-shared">¥0 / NT$0</span></div>
+      <div class="bud-summary-row" style="border:none"><span class="bud-summary-label">個人花費</span><span class="bud-summary-val" id="bud-p1-personal">¥0 / NT$0</span></div>
+    </div>
+    <div style="padding-top:10px;border-top:.5px solid var(--accent-light)">
+      <div class="bud-summary-label" style="font-weight:700;margin-bottom:4px">巫先生</div>
+      <div class="bud-summary-row"><span class="bud-summary-label">共同花費</span><span class="bud-summary-val" id="bud-p2-shared">¥0 / NT$0</span></div>
+      <div class="bud-summary-row" style="border:none"><span class="bud-summary-label">個人花費</span><span class="bud-summary-val" id="bud-p2-personal">¥0 / NT$0</span></div>
+    </div>
   </div>
 </div>
 
@@ -412,9 +420,19 @@ body {
   </div>
   <div class="bud-form-row">
     <input type="text" id="f-item" class="bud-input" placeholder="項目（如：鵜飼船票）">
-    <input type="number" id="f-amount" class="bud-input" placeholder="金額 ¥" min="0">
+    <input type="number" id="f-amount" class="bud-input" placeholder="金額" min="0" style="max-width:100px">
+    <select id="f-currency" class="bud-input" style="max-width:90px">
+      <option value="JPY">¥ 日幣</option>
+      <option value="TWD">NT$ 台幣</option>
+    </select>
   </div>
-  <input type="text" id="f-note" class="bud-input" placeholder="備註（選填）" style="width:100%;margin-top:6px">
+  <div class="bud-form-row" style="margin-bottom:0">
+    <select id="f-split" class="bud-input">
+      <option value="平分">兩人平分</option>
+      <option value="個人">個人花費</option>
+    </select>
+    <input type="text" id="f-note" class="bud-input" placeholder="備註（選填）">
+  </div>
   <button class="bud-submit-btn" onclick="addEntry()">送出</button>
 </div>
 
@@ -450,9 +468,19 @@ body {
     </div>
     <div class="bud-form-row">
       <input type="text" id="e-item" class="bud-input" placeholder="項目">
-      <input type="number" id="e-amount" class="bud-input" placeholder="金額 ¥" min="0">
+      <input type="number" id="e-amount" class="bud-input" placeholder="金額" min="0" style="max-width:100px">
+      <select id="e-currency" class="bud-input" style="max-width:90px">
+        <option value="JPY">¥ 日幣</option>
+        <option value="TWD">NT$ 台幣</option>
+      </select>
     </div>
-    <input type="text" id="e-note" class="bud-input" placeholder="備註（選填）" style="width:100%;margin-top:6px">
+    <div class="bud-form-row" style="margin-bottom:0">
+      <select id="e-split" class="bud-input">
+        <option value="平分">兩人平分</option>
+        <option value="個人">個人花費</option>
+      </select>
+      <input type="text" id="e-note" class="bud-input" placeholder="備註（選填）">
+    </div>
     <div class="modal-footer">
       <button class="modal-cancel" onclick="closeEdit()">取消</button>
       <button class="modal-save" id="e-save-btn" onclick="saveEdit()">儲存</button>
@@ -509,6 +537,8 @@ function addEntry(){
   var who=document.getElementById('f-who').value;
   var item=document.getElementById('f-item').value.trim();
   var amount=document.getElementById('f-amount').value;
+  var currency=document.getElementById('f-currency').value;
+  var split=document.getElementById('f-split').value;
   var note=document.getElementById('f-note').value.trim();
   if(!item||!amount){alert('請填寫項目和金額');return;}
   var btn=document.querySelector('.bud-submit-btn');
@@ -530,10 +560,11 @@ function addEntry(){
     btn.disabled=false;btn.textContent='送出';
   };
   script.onerror=function(){alert('網路錯誤，請再試一次');btn.disabled=false;btn.textContent='送出';};
-  script.src=API_URL+'?callback='+cb+'&action=add&date='+encodeURIComponent(day)+'&who='+encodeURIComponent(who)+'&item='+encodeURIComponent(item)+'&amount='+encodeURIComponent(amount)+'&note='+encodeURIComponent(note);
+  script.src=API_URL+'?callback='+cb+'&action=add&date='+encodeURIComponent(day)+'&who='+encodeURIComponent(who)+'&item='+encodeURIComponent(item)+'&amount='+encodeURIComponent(amount)+'&currency='+encodeURIComponent(currency)+'&split='+encodeURIComponent(split)+'&note='+encodeURIComponent(note);
   document.body.appendChild(script);
 }
 
+function fmtAmt(amt,cur){return (cur==='TWD'?'NT$':'¥')+amt.toLocaleString();}
 function renderEntries(){
   var container=document.getElementById('bud-entries');
   if(!container)return;
@@ -544,16 +575,21 @@ function renderEntries(){
     if(!byDay[d])byDay[d]=[];
     byDay[d].push(e);
   });
-  var grand=0;
+  var grandJPY=0,grandTWD=0;
   var summaryByDay={};
   DAY_ORDER.forEach(function(day){
     var entries=byDay[day]||[];
-    var dayTotal=entries.reduce(function(s,e){return s+(parseFloat(e['金額(¥)'])||0);},0);
-    grand+=dayTotal;
-    summaryByDay[day]=dayTotal;
+    var dayJPY=0,dayTWD=0;
+    entries.forEach(function(e){
+      var amt=parseFloat(e['金額(¥)'])||0;
+      if(e['幣別']==='TWD')dayTWD+=amt; else dayJPY+=amt;
+    });
+    grandJPY+=dayJPY;grandTWD+=dayTWD;
+    summaryByDay[day]={jpy:dayJPY,twd:dayTWD};
     var section=document.createElement('div');
     section.className='bud-day-section';
-    section.innerHTML='<div class="bud-day-hd2"><span class="bud-day-label">'+(DAY_LABELS[day]||day)+'</span><span class="bud-day-amt">¥'+dayTotal.toLocaleString()+'</span></div>';
+    var dayAmtStr=(dayJPY?'¥'+dayJPY.toLocaleString():'')+(dayJPY&&dayTWD?' / ':'')+(dayTWD?'NT$'+dayTWD.toLocaleString():'');
+    section.innerHTML='<div class="bud-day-hd2"><span class="bud-day-label">'+(DAY_LABELS[day]||day)+'</span><span class="bud-day-amt">'+(dayAmtStr||'¥0')+'</span></div>';
     if(!entries.length){
       section.innerHTML+='<div class="bud-empty">尚無紀錄</div>';
     } else {
@@ -562,12 +598,15 @@ function renderEntries(){
         var whoClass=who==='曹小姐'?'emma':'partner';
         var item=e['項目']||'';
         var note=e['備註']||'';
+        var split=e['分攤']||'';
+        var cur=e['幣別']||'JPY';
         var amt=parseFloat(e['金額(¥)'])||0;
+        var splitBadge=split?'<span style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--accent-bg);color:var(--accent);margin-left:4px">'+split+'</span>':'';
         var row=document.createElement('div');
         row.className='bud-entry';
         row.innerHTML='<span class="bud-entry-who '+whoClass+'">'+who+'</span>'+
-          '<div class="bud-entry-info"><div class="bud-entry-item">'+item+'</div>'+(note?'<div class="bud-entry-note">'+note+'</div>':'')+'</div>'+
-          '<span class="bud-entry-amt">¥'+amt.toLocaleString()+'</span>'+
+          '<div class="bud-entry-info"><div class="bud-entry-item">'+item+splitBadge+'</div>'+(note?'<div class="bud-entry-note">'+note+'</div>':'')+'</div>'+
+          '<span class="bud-entry-amt">'+fmtAmt(amt,cur)+'</span>'+
           '<div class="bud-entry-actions">'+
           '<button class="bud-action-btn" onclick="editEntry('+e._row+',event)" title="編輯">✏️</button>'+
           '<button class="bud-action-btn" onclick="deleteEntry('+e._row+',event)" title="刪除">🗑️</button>'+
@@ -577,23 +616,37 @@ function renderEntries(){
     }
     container.appendChild(section);
   });
-  // update summary
   var sr=document.getElementById('bud-summary-rows');
   if(sr){
     var html='';
     DAY_ORDER.forEach(function(day){
-      html+='<div class="bud-summary-row"><span class="bud-summary-label">'+(DAY_LABELS[day]||day)+'</span><span class="bud-summary-val">¥'+(summaryByDay[day]||0).toLocaleString()+'</span></div>';
+      var d=summaryByDay[day]||{jpy:0,twd:0};
+      var str=(d.jpy?'¥'+d.jpy.toLocaleString():'')+(d.jpy&&d.twd?' / ':'')+(d.twd?'NT$'+d.twd.toLocaleString():'');
+      html+='<div class="bud-summary-row"><span class="bud-summary-label">'+(DAY_LABELS[day]||day)+'</span><span class="bud-summary-val">'+(str||'¥0')+'</span></div>';
     });
     sr.innerHTML=html;
   }
-  var gt=document.getElementById('bud-grand-total');
-  if(gt)gt.textContent='¥'+grand.toLocaleString();
-  var p1=allEntries.reduce(function(s,e){return e['誰付']==='曹小姐'?s+(parseFloat(e['金額(¥)'])||0):s;},0);
-  var p2=allEntries.reduce(function(s,e){return e['誰付']==='巫先生'?s+(parseFloat(e['金額(¥)'])||0):s;},0);
-  var pt1=document.getElementById('bud-person1-total');
-  var pt2=document.getElementById('bud-person2-total');
-  if(pt1)pt1.textContent='¥'+p1.toLocaleString();
-  if(pt2)pt2.textContent='¥'+p2.toLocaleString();
+  var gjpy=document.getElementById('bud-grand-jpy');
+  var gtwd=document.getElementById('bud-grand-twd');
+  if(gjpy)gjpy.textContent='¥'+grandJPY.toLocaleString();
+  if(gtwd)gtwd.textContent='NT$'+grandTWD.toLocaleString();
+  // per-person totals
+  ['曹小姐','巫先生'].forEach(function(person,idx){
+    var prefix=idx===0?'bud-p1':'bud-p2';
+    var sharedJPY=0,sharedTWD=0,personalJPY=0,personalTWD=0;
+    allEntries.forEach(function(e){
+      var amt=parseFloat(e['金額(¥)'])||0;
+      var cur=e['幣別']||'JPY';
+      if(e['誰付']===person){
+        if(e['分攤']==='個人'){if(cur==='TWD')personalTWD+=amt;else personalJPY+=amt;}
+        else{if(cur==='TWD')sharedTWD+=amt;else sharedJPY+=amt;}
+      }
+    });
+    var shEl=document.getElementById(prefix+'-shared');
+    var peEl=document.getElementById(prefix+'-personal');
+    if(shEl)shEl.textContent='¥'+sharedJPY.toLocaleString()+' / NT$'+sharedTWD.toLocaleString();
+    if(peEl)peEl.textContent='¥'+personalJPY.toLocaleString()+' / NT$'+personalTWD.toLocaleString();
+  });
 }
 
 function deleteEntry(row,evt){
@@ -619,6 +672,8 @@ function editEntry(row,evt){
   document.getElementById('e-who').value=e['誰付']||'曹小姐';
   document.getElementById('e-item').value=e['項目']||'';
   document.getElementById('e-amount').value=e['金額(¥)']||'';
+  document.getElementById('e-currency').value=e['幣別']||'JPY';
+  document.getElementById('e-split').value=e['分攤']||'平分';
   document.getElementById('e-note').value=e['備註']||'';
   document.getElementById('edit-modal').classList.add('open');
 }
@@ -633,6 +688,8 @@ function saveEdit(){
   var who=document.getElementById('e-who').value;
   var item=document.getElementById('e-item').value.trim();
   var amount=document.getElementById('e-amount').value;
+  var currency=document.getElementById('e-currency').value;
+  var split=document.getElementById('e-split').value;
   var note=document.getElementById('e-note').value.trim();
   if(!item||!amount){alert('請填寫項目和金額');return;}
   var btn=document.getElementById('e-save-btn');
@@ -648,6 +705,7 @@ function saveEdit(){
   script.src=API_URL+'?callback='+cb+'&action=update&row='+row+
     '&date='+encodeURIComponent(day)+'&who='+encodeURIComponent(who)+
     '&item='+encodeURIComponent(item)+'&amount='+encodeURIComponent(amount)+
+    '&currency='+encodeURIComponent(currency)+'&split='+encodeURIComponent(split)+
     '&note='+encodeURIComponent(note)+'&t='+Date.now();
   document.body.appendChild(script);
 }
