@@ -698,6 +698,132 @@ body { padding-top: env(safe-area-inset-top); background: var(--bg); }
   font-size: 11px;
   color: var(--text2);
 }
+
+/* ═══════════════════════════════════════ */
+/*   STAGE 4B — INLINE EDITING             */
+/* ═══════════════════════════════════════ */
+
+.row { position: relative; }
+.row-delete-btn {
+  position: absolute;
+  top: 4px;
+  right: -6px;
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  color: var(--text4);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.45;
+  border-radius: 6px;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s, color .15s;
+}
+.row-delete-btn:hover, .row-delete-btn:active {
+  opacity: 1;
+  color: #C15E4C;
+  background: rgba(193, 94, 76, 0.08);
+}
+.row.itin-deleted { display: none !important; }
+.row.itin-user-added .tm {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.add-item-wrap {
+  margin-top: 22px;
+  padding: 0 4px;
+}
+.add-item-btn {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg2);
+  border: 1.5px dashed var(--border);
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text2);
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.03em;
+  transition: background .15s, border-color .15s;
+}
+.add-item-btn:hover, .add-item-btn:active {
+  background: var(--bg3);
+  border-color: var(--text4);
+}
+
+.add-item-form {
+  display: none;
+  padding: 18px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-top: 10px;
+}
+.add-item-form.open { display: block; }
+.add-item-form label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  margin-top: 12px;
+}
+.add-item-form label:first-child { margin-top: 0; }
+.add-item-form .form-row label { margin-top: 0; }
+.add-item-form input,
+.add-item-form select,
+.add-item-form textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text1);
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.add-item-form select {
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2212%22%20height%3D%228%22%20viewBox%3D%220%200%2012%208%22%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23888%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M1%201.5L6%206.5L11%201.5%22/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+.add-item-form textarea { min-height: 68px; resize: vertical; line-height: 1.5; }
+.add-item-form .form-row {
+  display: flex;
+  gap: 10px;
+}
+.add-item-form .form-row > div { flex: 1; min-width: 0; }
+.add-item-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.add-item-form-actions button {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.form-cancel-btn { background: var(--bg3); color: var(--text2); }
+.form-cancel-btn:active { background: var(--border); }
+.form-submit-btn { background: var(--text1); color: var(--bg2); }
+.form-submit-btn:disabled { opacity: 0.5; cursor: default; }
 </style>
 </head>
 <body>
@@ -989,19 +1115,6 @@ body { padding-top: env(safe-area-inset-top); background: var(--bg); }
   </div>
 
   <div class="sb"><span class="si2">🏯 清洲城 09:39</span><span class="si2">·</span><span class="si2">🛍️ 大須 13:40</span><span class="si2">·</span><span class="si2">🍗 手羽先 16:20</span><span class="si2">·</span><span class="si2">🌃 夜景 17:50</span></div>
-</div>
-
-<!-- ══════════════ MAP (placeholder) ══════════════ -->
-<div class="panel" id="tab-map">
-  <div class="coming-soon">
-    <svg class="coming-soon-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M8 12 L20 8 L28 12 L40 8 L40 36 L28 40 L20 36 L8 40 Z"/>
-      <line x1="20" y1="8" x2="20" y2="36"/>
-      <line x1="28" y1="12" x2="28" y2="40"/>
-    </svg>
-    <div class="coming-soon-title">地圖路線</div>
-    <div class="coming-soon-desc">Stage 4 會加上四天路線圖<br>與站點快速跳轉列表</div>
-  </div>
 </div>
 
 <!-- ══════════════ BUDGET (Expense) ══════════════ -->
@@ -1560,7 +1673,327 @@ function updateDayBudget(n,jpy){
   if(el)el.textContent=jpy>0?'¥'+jpy.toLocaleString():'¥—';
 }
 
+// ═══════════════════════════════════════════════════════════
+// ITINERARY EDITING (Google Sheet synced)
+// ═══════════════════════════════════════════════════════════
+
+var TYPE_LABELS = [
+  { v:'si', label:'📍 景點' },
+  { v:'fo', label:'🍽️ 餐廳' },
+  { v:'tr', label:'🚊 交通' },
+  { v:'ho', label:'🏨 飯店' },
+  { v:'pl', label:'✈️ 抵達／離開' }
+];
+var NOTE_TYPES = [
+  { v:'', label:'無備註框' },
+  { v:'tip', label:'💡 提示（藍框）' },
+  { v:'warning', label:'⚠️ 警示（紅框）' },
+  { v:'backup', label:'▸ 備用班次（紫框）' }
+];
+var DAY_SHEET_LABELS = ['9月5日', '9月6日', '9月7日', '9月8日'];
+
+function escapeHtml(s) {
+  s = String(s == null ? '' : s);
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Assign stable IDs to original hardcoded rows so they can be deleted
+function initItineraryRowIds() {
+  for (var day = 1; day <= 4; day++) {
+    var tl = document.getElementById('tl-'+day);
+    if (!tl) continue;
+    var rows = tl.querySelectorAll(':scope > .row');
+    Array.prototype.forEach.call(rows, function(row, idx) {
+      var id = 'd' + day + '-' + String(idx + 1).padStart(2, '0');
+      row.dataset.itineraryId = id;
+      row.dataset.day = day;
+      var tm = row.querySelector('.tm');
+      if (tm) row.dataset.time = tm.textContent.trim();
+      
+      var btn = document.createElement('button');
+      btn.className = 'row-delete-btn';
+      btn.textContent = '×';
+      btn.setAttribute('aria-label', '刪除');
+      btn.onclick = (function(rowId, rowDay){
+        return function(e){ e.stopPropagation(); confirmDeleteItem(rowId, rowDay); };
+      })(id, day);
+      row.appendChild(btn);
+    });
+  }
+}
+
+// Inject Add-item UI at bottom of each day's timeline
+function injectAddItemUI() {
+  var typeOpts = TYPE_LABELS.map(function(t){
+    return '<option value="'+t.v+'">'+t.label+'</option>';
+  }).join('');
+  var noteOpts = NOTE_TYPES.map(function(t){
+    return '<option value="'+t.v+'">'+t.label+'</option>';
+  }).join('');
+  
+  for (var n = 1; n <= 4; n++) {
+    var panel = document.getElementById('tab-day' + n);
+    if (!panel) continue;
+    var tl = panel.querySelector('.tl');
+    if (!tl) continue;
+    if (panel.querySelector('.add-item-wrap')) continue;
+    
+    var wrap = document.createElement('div');
+    wrap.className = 'add-item-wrap';
+    wrap.innerHTML = 
+      '<button class="add-item-btn" onclick="showAddForm('+n+')">+ 新增行程</button>' +
+      '<div class="add-item-form" id="add-form-'+n+'">' +
+        '<div class="form-row">' +
+          '<div><label>時間 *</label><input type="time" id="af-time-'+n+'"></div>' +
+          '<div><label>類型</label><select id="af-type-'+n+'">'+typeOpts+'</select></div>' +
+        '</div>' +
+        '<label>標題 *</label>' +
+        '<input type="text" id="af-title-'+n+'" placeholder="例：熱田神宮">' +
+        '<label>說明</label>' +
+        '<input type="text" id="af-desc-'+n+'" placeholder="例：停留 1.5 小時">' +
+        '<label>Google Maps 連結</label>' +
+        '<input type="url" id="af-map-'+n+'" placeholder="https://maps.google.com/…">' +
+        '<label>備註內容</label>' +
+        '<textarea id="af-note-'+n+'" placeholder="任何提醒事項"></textarea>' +
+        '<label>備註框樣式</label>' +
+        '<select id="af-notetype-'+n+'">'+noteOpts+'</select>' +
+        '<div class="add-item-form-actions">' +
+          '<button class="form-cancel-btn" onclick="cancelAddForm('+n+')">取消</button>' +
+          '<button class="form-submit-btn" id="af-submit-'+n+'" onclick="submitAddForm('+n+')">新增</button>' +
+        '</div>' +
+      '</div>';
+    tl.insertAdjacentElement('afterend', wrap);
+  }
+}
+
+function showAddForm(n) {
+  var f = document.getElementById('add-form-'+n);
+  if (f) {
+    f.classList.add('open');
+    setTimeout(function(){ f.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 100);
+  }
+}
+
+function cancelAddForm(n) {
+  var f = document.getElementById('add-form-'+n);
+  if (!f) return;
+  f.classList.remove('open');
+  ['time','title','desc','map','note'].forEach(function(k){
+    var el = document.getElementById('af-'+k+'-'+n);
+    if (el) el.value = '';
+  });
+  var ts = document.getElementById('af-type-'+n); if(ts) ts.selectedIndex = 0;
+  var ns = document.getElementById('af-notetype-'+n); if(ns) ns.selectedIndex = 0;
+}
+
+function submitAddForm(n) {
+  var time = document.getElementById('af-time-'+n).value.trim();
+  var type = document.getElementById('af-type-'+n).value;
+  var title = document.getElementById('af-title-'+n).value.trim();
+  var desc = document.getElementById('af-desc-'+n).value.trim();
+  var mapUrl = document.getElementById('af-map-'+n).value.trim();
+  var note = document.getElementById('af-note-'+n).value.trim();
+  var noteType = document.getElementById('af-notetype-'+n).value;
+  
+  if (!time || !title) {
+    alert('時間跟標題是必填');
+    return;
+  }
+  
+  var btn = document.getElementById('af-submit-'+n);
+  btn.disabled = true;
+  btn.textContent = '送出中...';
+  
+  var cb = 'cbItAdd'+Date.now();
+  var script = document.createElement('script');
+  window[cb] = function(data) {
+    delete window[cb];
+    document.body.removeChild(script);
+    btn.disabled = false;
+    btn.textContent = '新增';
+    if (data && data.success) {
+      var item = {
+        id: data.id, day: n,
+        time: time, type: type, title: title, desc: desc,
+        mapUrl: mapUrl, note: note, noteType: noteType
+      };
+      cancelAddForm(n);
+      var row = createRowElement(item);
+      insertRowByTime(n, row);
+    } else {
+      alert('新增失敗，請再試一次');
+    }
+  };
+  script.onerror = function() {
+    delete window[cb];
+    btn.disabled = false;
+    btn.textContent = '新增';
+    alert('網路錯誤，請再試一次');
+  };
+  script.src = API_URL + '?callback=' + cb + 
+    '&action=itinerary_add' +
+    '&day=' + encodeURIComponent(DAY_SHEET_LABELS[n-1]) +
+    '&time=' + encodeURIComponent(time) +
+    '&type=' + encodeURIComponent(type) +
+    '&title=' + encodeURIComponent(title) +
+    '&desc=' + encodeURIComponent(desc) +
+    '&map_url=' + encodeURIComponent(mapUrl) +
+    '&note=' + encodeURIComponent(note) +
+    '&note_type=' + encodeURIComponent(noteType) +
+    '&t=' + Date.now();
+  document.body.appendChild(script);
+}
+
+function confirmDeleteItem(id, day) {
+  if (!confirm('確定要刪除這個行程嗎？')) return;
+  
+  var row = document.querySelector('[data-itinerary-id="' + id + '"]');
+  if (!row) return;
+  var wasUserAdded = row.classList.contains('itin-user-added');
+  
+  if (wasUserAdded) row.remove();
+  else row.classList.add('itin-deleted');
+  
+  var cb = 'cbItDel'+Date.now();
+  var script = document.createElement('script');
+  window[cb] = function(data) {
+    delete window[cb];
+    document.body.removeChild(script);
+    if (!(data && data.success)) {
+      if (!wasUserAdded && row) row.classList.remove('itin-deleted');
+      else fetchItinerary();
+      alert('刪除失敗，請再試一次');
+    }
+  };
+  script.onerror = function() {
+    delete window[cb];
+    if (!wasUserAdded && row) row.classList.remove('itin-deleted');
+    else fetchItinerary();
+    alert('網路錯誤，刪除未完成');
+  };
+  script.src = API_URL + '?callback=' + cb + 
+    '&action=itinerary_delete' +
+    '&day=' + encodeURIComponent(DAY_SHEET_LABELS[day-1]) +
+    '&id=' + encodeURIComponent(id) +
+    '&t=' + Date.now();
+  document.body.appendChild(script);
+}
+
+function createRowElement(item) {
+  var row = document.createElement('div');
+  row.className = 'row itin-user-added';
+  row.dataset.itineraryId = item.id;
+  row.dataset.day = item.day;
+  row.dataset.time = item.time;
+  
+  var mapHtml = item.mapUrl ? 
+    ' <a class="ml" href="' + escapeHtml(item.mapUrl) + '" target="_blank">📍 地圖</a>' : '';
+  var descHtml = item.desc ? 
+    '<div class="id">' + escapeHtml(item.desc) + '</div>' : '';
+  
+  var noteHtml = '';
+  if (item.note) {
+    var nt = item.noteType || '';
+    var cls, icon;
+    if (nt === 'warning') { cls = 'wb'; icon = '⚠️ '; }
+    else if (nt === 'backup') { cls = 'ti'; icon = '▸ '; }
+    else if (nt === 'tip') { cls = 'nb'; icon = '💡 '; }
+    else { cls = 'nb'; icon = ''; }
+    noteHtml = '<div class="' + cls + '"><div class="tr2">' + icon + escapeHtml(item.note) + '</div></div>';
+  }
+  
+  row.innerHTML = 
+    '<div class="tc"><span class="tm">' + escapeHtml(item.time) + '</span></div>' +
+    '<div class="ic"><div class="dot ' + escapeHtml(item.type) + '"></div></div>' +
+    '<div class="cc">' +
+      '<div class="it">' + escapeHtml(item.title) + mapHtml + '</div>' +
+      descHtml + noteHtml +
+    '</div>';
+  
+  var btn = document.createElement('button');
+  btn.className = 'row-delete-btn';
+  btn.textContent = '×';
+  btn.setAttribute('aria-label', '刪除');
+  btn.onclick = (function(rowId, rowDay){
+    return function(e){ e.stopPropagation(); confirmDeleteItem(rowId, rowDay); };
+  })(item.id, item.day);
+  row.appendChild(btn);
+  
+  return row;
+}
+
+function insertRowByTime(day, newRow) {
+  var tl = document.getElementById('tl-'+day);
+  if (!tl) return;
+  var newTime = newRow.dataset.time || '';
+  var existing = tl.querySelectorAll(':scope > .row');
+  var inserted = false;
+  for (var i = 0; i < existing.length; i++) {
+    var t = existing[i].dataset.time || '';
+    if (t && t > newTime) {
+      tl.insertBefore(newRow, existing[i]);
+      inserted = true;
+      break;
+    }
+  }
+  if (!inserted) tl.appendChild(newRow);
+}
+
+// Fetch itinerary edits from Google Sheet
+function fetchItinerary() {
+  var cb = 'cbItFetch'+Date.now();
+  var script = document.createElement('script');
+  window[cb] = function(data) {
+    delete window[cb];
+    document.body.removeChild(script);
+    if (data && data.success) applyItineraryEdits(data.data || []);
+  };
+  script.onerror = function() {
+    delete window[cb];
+    if (script.parentElement) document.body.removeChild(script);
+  };
+  script.src = API_URL + '?callback=' + cb + '&action=itinerary_fetch&t=' + Date.now();
+  document.body.appendChild(script);
+}
+
+function applyItineraryEdits(edits) {
+  // Remove previously-injected user rows
+  document.querySelectorAll('.row.itin-user-added').forEach(function(r){ r.remove(); });
+  // Reset deletes
+  document.querySelectorAll('.row.itin-deleted').forEach(function(r){ r.classList.remove('itin-deleted'); });
+  
+  var deletedIds = {};
+  edits.forEach(function(e){
+    if (e['動作'] === 'delete' && e['ID']) deletedIds[e['ID']] = true;
+  });
+  
+  Object.keys(deletedIds).forEach(function(id){
+    var row = document.querySelector('[data-itinerary-id="' + id + '"]');
+    if (row) row.classList.add('itin-deleted');
+  });
+  
+  edits.forEach(function(e){
+    if (e['動作'] !== 'add' || !e['ID']) return;
+    if (deletedIds[e['ID']]) return;
+    var dayN = DAY_SHEET_LABELS.indexOf(e['日期']) + 1;
+    if (!dayN) return;
+    var item = {
+      id: e['ID'], day: dayN,
+      time: e['時間'] || '', type: e['類型'] || 'si',
+      title: e['標題'] || '', desc: e['說明'] || '',
+      mapUrl: e['地圖連結'] || '', note: e['備註'] || '',
+      noteType: e['備註類型'] || ''
+    };
+    var row = createRowElement(item);
+    insertRowByTime(dayN, row);
+  });
+}
+
 renderHome();
+initItineraryRowIds();
+injectAddItemUI();
+fetchItinerary();
+setInterval(fetchItinerary, 60000);
 </script>
 
 <!-- ══════════════ BOTTOM NAV ══════════════ -->
@@ -1572,10 +2005,6 @@ renderHome();
   <button class="bnav-btn" data-tab="itinerary" onclick="switchTab('itinerary',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>
     <span>Itinerary</span>
-  </button>
-  <button class="bnav-btn" data-tab="map" onclick="switchTab('map',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21 C12 21 5 13 5 9 A7 7 0 0 1 19 9 C19 13 12 21 12 21 Z"/><circle cx="12" cy="9" r="2.5"/></svg>
-    <span>Map</span>
   </button>
   <button class="bnav-btn" data-tab="budget" onclick="switchTab('budget',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10 H21"/><circle cx="16" cy="14" r="1.5"/></svg>
