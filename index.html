@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -8,6 +9,7 @@
 <title>名古屋・岐阜 旅行手帳</title>
 <style>
 :root {
+  color-scheme: light;
   --bg: #f7f5f0;
   --bg2: #ffffff;
   --bg3: #faf8f5;
@@ -41,7 +43,7 @@
   --note-bg: #e8f4fd;
   --transit-bg: #f4f2ff;
 }
-@media (prefers-color-scheme: dark) {
+@media not all {
   :root {
     --bg: #111111;
     --bg2: #1c1c1e;
@@ -100,7 +102,7 @@ body {
   padding-top: env(safe-area-inset-top);
   box-shadow: 0 1px 6px rgba(0,0,0,0.08);
 }
-@media (prefers-color-scheme: dark) {
+@media not all {
   .nav { box-shadow: 0 1px 6px rgba(0,0,0,0.4); }
 }
 .nav-btn {
@@ -249,7 +251,7 @@ body {
 .bud-entry-who { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
 .bud-entry-who.emma { background:#fdf3ec; color:var(--accent); }
 .bud-entry-who.partner { background:#f0f6ff; color:var(--blue); }
-@media (prefers-color-scheme:dark) {
+@media not all {
   .bud-entry-who.emma { background:#2a1f14; }
   .bud-entry-who.partner { background:#0d1f33; }
 }
@@ -271,48 +273,589 @@ body {
 .modal-cancel { flex:1; padding:10px; background:var(--bg4); color:var(--text2); border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
 .modal-save { flex:2; padding:10px; background:var(--accent); color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
 .modal-save:disabled { opacity:.5; cursor:default; }
+
+/* ═══════════════════════════════════════ */
+/*   NEW STAGE 3 STYLES — Home + Bottom Nav */
+/* ═══════════════════════════════════════ */
+
+/* Day accent tokens */
+:root {
+  --d1: #E88B7D; --d1-bg: #FCE7E3; --d1-text: #A54338;
+  --d2: #9CAF88; --d2-bg: #E8EFE1; --d2-text: #4E5F3C;
+  --d3: #E8B84A; --d3-bg: #FBF0D4; --d3-text: #7A5B10;
+  --d4: #B5A8D4; --d4-bg: #EEEBF5; --d4-text: #56487F;
+}
+@media not all {
+  :root {
+    --d1: #E88B7D; --d1-bg: #2E1A17; --d1-text: #F0A093;
+    --d2: #9CAF88; --d2-bg: #1B2418; --d2-text: #B4C6A0;
+    --d3: #E8B84A; --d3-bg: #2C2210; --d3-text: #F0C863;
+    --d4: #B5A8D4; --d4-bg: #201B2C; --d4-text: #C7BDE0;
+  }
+}
+
+/* Old top nav neutralized (removed from DOM) */
+.nav, .nav-btn, .nav-spacer { display: none !important; }
+
+/* Panel bottom padding for bottom nav clearance */
+.panel { padding-top: 20px; padding-bottom: calc(90px + env(safe-area-inset-bottom)); padding-left: 16px; padding-right: 16px; }
+body { padding-top: env(safe-area-inset-top); background: var(--bg); }
+
+/* ── HOME HERO ── */
+.home-hero {
+  padding: 26px 22px 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-illustration {
+  position: absolute;
+  right: -4px;
+  top: 18px;
+  width: 148px;
+  opacity: 0.95;
+  pointer-events: none;
+}
+.hero-illustration svg { width: 100%; height: auto; display: block; }
+.hero-title-block { position: relative; z-index: 1; max-width: 62%; }
+.hero-title {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--text1);
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Noto Sans TC', sans-serif;
+}
+.hero-jp {
+  font-size: 12px;
+  color: var(--text2);
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.hero-dates {
+  font-size: 11px;
+  color: var(--d1);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.hero-stats {
+  display: flex;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border2);
+  position: relative;
+  z-index: 1;
+}
+.stat {
+  flex: 1;
+  text-align: center;
+  border-right: 1px solid var(--border2);
+  padding: 0 4px;
+}
+.stat:last-child { border-right: none; }
+.stat-icon {
+  width: 13px;
+  height: 13px;
+  margin: 0 auto 5px;
+  color: var(--text3);
+  display: block;
+}
+.stat-num {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text1);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.stat-label {
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+/* ── HOME STATUS BAR ── */
+.home-status {
+  padding: 11px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.home-status.upcoming { background: var(--summary-bg); color: var(--accent); border: 1px solid var(--accent-light); }
+.home-status.today { background: var(--text1); color: var(--bg2); }
+.home-status.done { background: var(--bg3); color: var(--text3); border: 1px solid var(--border); }
+
+/* ── HOME DAY CARDS ── */
+.home-days { display: flex; flex-direction: column; gap: 12px; }
+.hd-card {
+  position: relative;
+  border-radius: 20px;
+  padding: 16px 18px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+  transition: transform .12s ease;
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  min-height: 96px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+}
+.hd-card:active { transform: scale(0.985); }
+.hd-card.day-1 { background: var(--d1-bg); border-color: transparent; }
+.hd-card.day-2 { background: var(--d2-bg); border-color: transparent; }
+.hd-card.day-3 { background: var(--d3-bg); border-color: transparent; }
+.hd-card.day-4 { background: var(--d4-bg); border-color: transparent; }
+.hd-card.today { padding: 22px 22px 20px; min-height: 128px; border-width: 2px; }
+.hd-card.day-1.today { border-color: var(--d1); }
+.hd-card.day-2.today { border-color: var(--d2); }
+.hd-card.day-3.today { border-color: var(--d3); }
+.hd-card.day-4.today { border-color: var(--d4); }
+.hd-card.completed { opacity: 0.55; }
+
+.hd-left {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 44px;
+  padding-top: 2px;
+}
+.hd-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--text3);
+  margin-bottom: 2px;
+}
+.hd-num {
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--text1);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.hd-card.today .hd-num { font-size: 48px; }
+.hd-card.day-1 .hd-num, .hd-card.day-1 .hd-label { color: var(--d1-text); }
+.hd-card.day-2 .hd-num, .hd-card.day-2 .hd-label { color: var(--d2-text); }
+.hd-card.day-3 .hd-num, .hd-card.day-3 .hd-label { color: var(--d3-text); }
+.hd-card.day-4 .hd-num, .hd-card.day-4 .hd-label { color: var(--d4-text); }
+
+.hd-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 68px;
+}
+.hd-top { min-width: 0; }
+.hd-date {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  margin-bottom: 4px;
+}
+.hd-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text1);
+  line-height: 1.35;
+  margin-bottom: 8px;
+  word-break: break-word;
+}
+.hd-card.today .hd-title { font-size: 16px; }
+.hd-meta {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.hd-status {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+.hd-status-today { background: var(--text1); color: var(--bg2); }
+.hd-status-completed { background: rgba(0,0,0,0.08); color: var(--text2); }
+@media not all {
+  .hd-status-completed { background: rgba(255,255,255,0.1); }
+}
+.hd-status-upcoming { background: rgba(255,255,255,0.55); color: var(--text2); }
+@media not all {
+  .hd-status-upcoming { background: rgba(0,0,0,0.28); }
+}
+.hd-spots { color: var(--text2); font-weight: 600; }
+
+.hd-illust {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 62px;
+  height: 54px;
+  pointer-events: none;
+}
+.hd-card.today .hd-illust { width: 72px; height: 62px; }
+.hd-illust svg { width: 100%; height: 100%; display: block; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--nav-bg);
+  border-top: 1px solid var(--nav-border);
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
+}
+@media not all {
+  .bottom-nav { box-shadow: 0 -2px 12px rgba(0,0,0,0.4); }
+}
+.bnav-btn {
+  flex: 1;
+  padding: 9px 4px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text3);
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .15s;
+  min-height: 60px;
+  position: relative;
+}
+.bnav-btn svg { width: 22px; height: 22px; display: block; }
+.bnav-btn span { font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
+.bnav-btn.active { color: var(--accent); }
+.bnav-btn.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 0 0 2px 2px;
+}
+.bnav-btn:active { opacity: 0.65; }
+
+/* ── COMING SOON ── */
+.coming-soon {
+  padding: 60px 24px 70px;
+  text-align: center;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  margin-top: 40px;
+}
+.coming-soon-icon { width: 48px; height: 48px; margin: 0 auto 16px; color: var(--text4); display: block; }
+.coming-soon-title { font-size: 17px; font-weight: 700; color: var(--text1); margin-bottom: 10px; letter-spacing: 0.02em; }
+.coming-soon-desc { font-size: 12px; color: var(--text3); line-height: 1.7; }
+
+/* ═══════════════════════════════════════ */
+/*   STAGE 4A — DAY DETAIL                 */
+/* ═══════════════════════════════════════ */
+
+.dd-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  margin-top: 2px;
+}
+.dd-back {
+  background: none;
+  border: none;
+  padding: 8px 12px 8px 4px;
+  cursor: pointer;
+  color: var(--text1);
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 8px;
+}
+.dd-back:active { background: var(--bg3); }
+.dd-back svg { width: 20px; height: 20px; display: block; }
+.dd-daylabel {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+.dd-daylabel.day-1 { color: var(--d1-text); }
+.dd-daylabel.day-2 { color: var(--d2-text); }
+.dd-daylabel.day-3 { color: var(--d3-text); }
+.dd-daylabel.day-4 { color: var(--d4-text); }
+.dd-spacer { width: 40px; }
+
+.dd-titlebar { padding: 0 2px 18px; }
+.dd-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text1);
+  line-height: 1.35;
+  margin-bottom: 6px;
+  word-break: break-word;
+  letter-spacing: -0.01em;
+}
+.dd-datemeta {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--text3);
+  font-weight: 800;
+}
+
+.dd-banner {
+  position: relative;
+  height: 130px;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.dd-banner.day-1 { background: var(--d1-bg); }
+.dd-banner.day-2 { background: var(--d2-bg); }
+.dd-banner.day-3 { background: var(--d3-bg); }
+.dd-banner.day-4 { background: var(--d4-bg); }
+.dd-banner-illust { width: 108px; height: 96px; }
+.dd-banner-illust svg { width: 100%; height: 100%; display: block; }
+
+.dd-infobar {
+  display: flex;
+  padding: 14px 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 22px;
+}
+.dd-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px;
+  border-right: 1px solid var(--border2);
+  min-width: 0;
+}
+.dd-info:last-child { border-right: none; }
+.dd-info-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.dd-info-icon svg { width: 100%; height: 100%; display: block; }
+.dd-info-text { display: flex; flex-direction: column; min-width: 0; }
+.dd-stat-num {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text1);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.dd-stat-label {
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* Day Detail timeline uses existing .tl / .row styles */
+.panel[id^="tab-day"] .tl { padding: 0 2px; }
+.panel[id^="tab-day"] .sb {
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text2);
+}
 </style>
 </head>
 <body>
 
-<div class="nav">
-  <button class="nav-btn active" onclick="switchTab('itinerary',this)">🗓 行程</button>
-  <button class="nav-btn" onclick="switchTab('budget',this)">💴 花費</button>
-  <button class="nav-btn" onclick="switchTab('checklist',this)">🧳 攜帶清單</button>
+<!-- ══════════════ HOME / TRIP ══════════════ -->
+<div class="panel active" id="tab-home">
+  <div class="home-hero">
+    <div class="hero-illustration" aria-hidden="true">
+      <svg viewBox="0 0 140 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="18" cy="14" rx="10" ry="3.5" fill="#F0E3D0" opacity="0.75"/>
+        <ellipse cx="122" cy="22" rx="8" ry="2.8" fill="#F0E3D0" opacity="0.65"/>
+        <ellipse cx="24" cy="54" rx="12" ry="14" fill="#6B8A57"/>
+        <rect x="22" y="62" width="4" height="10" fill="#5B4838"/>
+        <path d="M62 22 L70 14 L78 22 L78 26 L62 26 Z" fill="#C15E4C"/>
+        <rect x="64" y="26" width="12" height="8" fill="#F0E3D0"/>
+        <path d="M58 34 L70 27 L82 34 L82 38 L58 38 Z" fill="#C15E4C"/>
+        <rect x="60" y="38" width="20" height="10" fill="#F0E3D0"/>
+        <rect x="63" y="41" width="4" height="4" fill="#7692AB"/>
+        <rect x="73" y="41" width="4" height="4" fill="#7692AB"/>
+        <path d="M52 48 L70 39 L88 48 L88 52 L52 52 Z" fill="#C15E4C"/>
+        <rect x="54" y="52" width="32" height="14" fill="#F0E3D0"/>
+        <rect x="58" y="56" width="4" height="6" fill="#7692AB"/>
+        <rect x="66" y="56" width="4" height="6" fill="#7692AB"/>
+        <rect x="74" y="56" width="4" height="6" fill="#7692AB"/>
+        <rect x="82" y="56" width="4" height="6" fill="#7692AB"/>
+        <path d="M67 14 L70 9 L73 14 L70 12 Z" fill="#C69B45"/>
+        <rect x="46" y="66" width="48" height="6" fill="#8A6A2D"/>
+        <path d="M108 42 Q116 40 124 42 L124 45 L108 45 Z" fill="#C15E4C"/>
+        <rect x="110" y="45" width="3" height="22" fill="#C15E4C"/>
+        <rect x="119" y="45" width="3" height="22" fill="#C15E4C"/>
+        <rect x="108" y="49" width="16" height="2.5" fill="#C15E4C"/>
+        <rect x="0" y="72" width="140" height="3" fill="#5B4838"/>
+      </svg>
+    </div>
+    <div class="hero-title-block">
+      <div class="hero-title">NAGOYA<br>TRIP</div>
+      <div class="hero-jp">名古屋・岐阜の旅</div>
+      <div class="hero-dates">SEP 5 – SEP 8, 2026</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <svg class="stat-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12 C7 12 3 8 3 5 A4 4 0 0 1 11 5 C11 8 7 12 7 12 Z"/><circle cx="7" cy="5" r="1.4"/></svg>
+        <div class="stat-num">4</div><div class="stat-label">DAYS</div>
+      </div>
+      <div class="stat">
+        <svg class="stat-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="4" width="11" height="8" rx="1"/><path d="M4.5 4 L5.5 2 H8.5 L9.5 4"/><circle cx="7" cy="8" r="2"/></svg>
+        <div class="stat-num">12</div><div class="stat-label">SPOTS</div>
+      </div>
+      <div class="stat">
+        <svg class="stat-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2.5 L7 7 L11 2.5"/><line x1="7" y1="7" x2="7" y2="12"/><line x1="3.5" y1="8.5" x2="10.5" y2="8.5"/><line x1="3.5" y1="10.5" x2="10.5" y2="10.5"/></svg>
+        <div class="stat-num" id="home-budget">¥0</div><div class="stat-label">BUDGET</div>
+      </div>
+      <div class="stat">
+        <svg class="stat-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="5" r="1.8"/><circle cx="10" cy="6" r="1.4"/><path d="M1.8 12 C1.8 9.8 3.2 8.8 5 8.8 C6.8 8.8 8.2 9.8 8.2 12"/><path d="M8 12 C8 10.2 9 9.6 10 9.6 C11 9.6 12.2 10.2 12.2 12"/></svg>
+        <div class="stat-num">2</div><div class="stat-label">TRAVELERS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-status" id="home-status">⟳</div>
+
+  <div class="home-days" id="home-days"></div>
 </div>
-<div class="nav-spacer"></div>
 
 <!-- ══════════════ ITINERARY ══════════════ -->
-<div class="panel active" id="tab-itinerary">
-<div class="trip-header">
-  <div class="trip-title">名古屋・岐阜 旅行手帳</div>
-  <div class="trip-sub">2026年9月5日（六）— 9月8日（二）・VESSEL INN SAKAE STATION</div>
-</div>
+<!-- ══════════════ DAY 1 DETAIL ══════════════ -->
+<div class="panel" id="tab-day1">
+  <div class="dd-topbar">
+    <button class="dd-back" onclick="switchTab('home',null)" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18 L9 12 L15 6"/></svg></button>
+    <div class="dd-daylabel day-1">DAY 01</div>
+    <div class="dd-spacer"></div>
+  </div>
 
-<!-- DAY 1 -->
-<div class="day-card">
-<div class="day-accent"></div>
-<div class="day-header" onclick="togDay('dy1')">
-  <div class="day-left"><div class="day-num">01</div><div class="day-info"><div class="day-date">9月5日（六）</div><div class="day-title">抵達日・安頓入住</div></div></div>
-  <span class="chevron" id="ch-dy1">▾</span>
-</div>
-<div class="day-body" id="dy1"><div class="tl">
+  <div class="dd-titlebar">
+    <div class="dd-title">抵達日・安頓入住</div>
+    <div class="dd-datemeta">9/5 · SAT</div>
+  </div>
+
+  <div class="dd-banner day-1">
+    <div class="dd-banner-illust"><svg viewBox="0 0 68 60" xmlns="http://www.w3.org/2000/svg"><path d="M10 22 L32 8 L54 22 L54 26 L10 26 Z" fill="#C15E4C"/><rect x="14" y="24" width="36" height="30" fill="#F0E3D0"/><rect x="18" y="30" width="6" height="6" fill="#7692AB"/><rect x="40" y="30" width="6" height="6" fill="#7692AB"/><rect x="18" y="42" width="6" height="6" fill="#7692AB"/><rect x="40" y="42" width="6" height="6" fill="#7692AB"/><rect x="28" y="36" width="8" height="18" fill="#3D2E27"/><circle cx="34" cy="46" r="0.7" fill="#C69B45"/><rect x="52" y="44" width="12" height="10" fill="#C69B45" rx="1"/><rect x="55" y="41" width="6" height="3" fill="none" stroke="#8A6A2D" stroke-width="1" rx="0.6"/><rect x="52" y="47" width="12" height="0.8" fill="#8A6A2D"/></svg></div>
+  </div>
+
+  <div class="dd-infobar">
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14 C8 14 3 9 3 6 A5 5 0 0 1 13 6 C13 9 8 14 8 14 Z"/><circle cx="8" cy="6" r="1.8"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num">1</div>
+        <div class="dd-stat-label">SPOTS</div>
+      </div>
+    </div>
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="5" height="8"/><rect x="8" y="3" width="6" height="11"/><line x1="4" y1="8.5" x2="5" y2="8.5"/><line x1="4" y1="11" x2="5" y2="11"/><line x1="10" y1="6" x2="12" y2="6"/><line x1="10" y1="9" x2="12" y2="9"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num">1</div>
+        <div class="dd-stat-label">CITIES</div>
+      </div>
+    </div>
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3 L8 8 L12 3"/><line x1="8" y1="8" x2="8" y2="13"/><line x1="4" y1="9.5" x2="12" y2="9.5"/><line x1="4" y1="11.5" x2="12" y2="11.5"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num" id="dd-budget-1">¥—</div>
+        <div class="dd-stat-label">EST.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl" id="tl-1">
 <div class="row"><div class="tc"><span class="tm">14:55</span></div><div class="ic"><div class="dot pl"></div></div><div class="cc"><div class="it">✈️ JX838 桃園起飛</div><div class="id">14:55 起飛 → 18:45 抵達中部國際機場（NGO）</div></div></div>
 <div class="row"><div class="tc"><span class="tm">18:45</span></div><div class="ic"><div class="dot pl"></div></div><div class="cc"><div class="it">落地・入境・領行李 <a class="ml" href="https://maps.google.com/?q=中部国際空港+セントレア+愛知県常滑市" target="_blank">📍 地圖</a></div><div class="id">預留 2 小時完成入境手續</div></div></div>
 <div class="row"><div class="tc"><span class="tm">20:45</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 名鐵特急 → 金山 → 名城線 → 榮</div><div class="ti"><div class="tr2">預計班次：20:48 發（特急約35分）→ 金山轉名城線右回り → 榮（約5分）</div><div class="tb">▸ 備用班次：21:18 發</div></div></div></div>
 <div class="row"><div class="tc"><span class="tm">21:45</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">🏨 飯店 Check-in <a class="ml" href="https://maps.google.com/?q=VESSEL+INN+SAKAE+STATION+名古屋市栄" target="_blank">📍 地圖</a></div><div class="id">榮站1號出口步行 2+15=17分・Check-in 預留 1 小時</div><div class="nb"><div class="tr2">💡 今晚抵達較晚，安頓休息即可。明日行程豐富，早點就寢！</div></div></div></div>
-</div></div>
-<div class="sb"><span class="si2">✈️ 落地 18:45</span><span class="si2">·</span><span class="si2">🚆 市區 約 21:30</span><span class="si2">·</span><span class="si2">🏨 Check-in 約 21:45</span></div>
+  </div>
+
+  <div class="sb"><span class="si2">✈️ 落地 18:45</span><span class="si2">·</span><span class="si2">🚆 市區 約 21:30</span><span class="si2">·</span><span class="si2">🏨 Check-in 約 21:45</span></div>
 </div>
 
-<!-- DAY 2 -->
-<div class="day-card">
-<div class="day-accent"></div>
-<div class="day-header" onclick="togDay('dy2')">
-  <div class="day-left"><div class="day-num">02</div><div class="day-info"><div class="day-date">9月6日（日）</div><div class="day-title">熱田神宮・鰻魚飯・岐阜・長良川鵜飼</div></div></div>
-  <span class="chevron" id="ch-dy2">▾</span>
-</div>
-<div class="day-body open" id="dy2"><div class="tl">
+<!-- ══════════════ DAY 2 DETAIL ══════════════ -->
+<div class="panel" id="tab-day2">
+  <div class="dd-topbar">
+    <button class="dd-back" onclick="switchTab('home',null)" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18 L9 12 L15 6"/></svg></button>
+    <div class="dd-daylabel day-2">DAY 02</div>
+    <div class="dd-spacer"></div>
+  </div>
+
+  <div class="dd-titlebar">
+    <div class="dd-title">熱田神宮・鰻魚飯・岐阜・長良川鵜飼</div>
+    <div class="dd-datemeta">9/6 · SUN</div>
+  </div>
+
+  <div class="dd-banner day-2">
+    <div class="dd-banner-illust"><svg viewBox="0 0 68 60" xmlns="http://www.w3.org/2000/svg"><ellipse cx="52" cy="20" rx="12" ry="10" fill="#6B8A57"/><rect x="50" y="26" width="4" height="10" fill="#5B4838"/><path d="M4 14 Q22 8 40 14 L40 18 L4 18 Z" fill="#C15E4C"/><rect x="8" y="18" width="4" height="24" fill="#C15E4C"/><rect x="32" y="18" width="4" height="24" fill="#C15E4C"/><rect x="6" y="22" width="32" height="3" fill="#C15E4C"/><path d="M0 48 Q8 46 16 48 T32 48 T48 48 T64 48 M0 54 Q8 52 16 54 T32 54 T48 54 T64 54" stroke="#7692AB" stroke-width="1.5" fill="none"/><path d="M42 42 L64 42 L60 48 L46 48 Z" fill="#F0E3D0"/><circle cx="53" cy="36" r="3" fill="#C69B45"/><line x1="53" y1="33" x2="53" y2="42" stroke="#3D2E27" stroke-width="1"/></svg></div>
+  </div>
+
+  <div class="dd-infobar">
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14 C8 14 3 9 3 6 A5 5 0 0 1 13 6 C13 9 8 14 8 14 Z"/><circle cx="8" cy="6" r="1.8"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num">4</div>
+        <div class="dd-stat-label">SPOTS</div>
+      </div>
+    </div>
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="5" height="8"/><rect x="8" y="3" width="6" height="11"/><line x1="4" y1="8.5" x2="5" y2="8.5"/><line x1="4" y1="11" x2="5" y2="11"/><line x1="10" y1="6" x2="12" y2="6"/><line x1="10" y1="9" x2="12" y2="9"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num">2</div>
+        <div class="dd-stat-label">CITIES</div>
+      </div>
+    </div>
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3 L8 8 L12 3"/><line x1="8" y1="8" x2="8" y2="13"/><line x1="4" y1="9.5" x2="12" y2="9.5"/><line x1="4" y1="11.5" x2="12" y2="11.5"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num" id="dd-budget-2">¥—</div>
+        <div class="dd-stat-label">EST.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl" id="tl-2">
 <div class="row"><div class="tc"><span class="tm">08:30</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">出門・步行至榮站</div><div class="id">飯店 → 榮站：2+15=17分</div></div></div>
 <div class="row"><div class="tc"><span class="tm">08:47</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 地鐵名城線 → 神宮傳馬町站</div><div class="ti"><div class="tr2">名城線右回り・榮 → 神宮傳馬町（約8分）</div><div class="tr2">預計班次：08:50 發 → 08:58 抵</div><div class="tb">▸ 備用班次：09:00 發（班距約3分）</div></div></div></div>
 <div class="row"><div class="tc"><span class="tm">09:00</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">⛩️ 熱田神宮 <a class="ml" href="https://maps.google.com/?q=熱田神宮+名古屋市熱田区神宮1丁目1-1" target="_blank">📍 地圖</a></div><div class="id">步行至神宮：約1+15=16分・草薙劍・千年大楠樹・心之小徑・停留 1.5 小時</div></div></div>
@@ -326,18 +869,53 @@ body {
 <div class="row"><div class="tc"><span class="tm">18:15</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🚢 長良川鵜飼出船 + 🍱 晚餐（船上）</div><div class="id">1,300 年傳統鸕鶿捕魚・含船上晚餐・約 2.5 小時</div></div></div>
 <div class="row"><div class="tc"><span class="tm">20:30</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 返回名古屋</div><div class="id">步行至公車站（+15分）→ 名鐵岐阜 → 金山 → 榮</div><div class="ti"><div class="tr2">預計班次：約 20:50 名鐵岐阜發 → 21:25 金山 → 21:30 榮</div><div class="tb">▸ 備用班次：21:20 名鐵岐阜發</div></div></div></div>
 <div class="row"><div class="tc"><span class="tm">21:47</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">🏨 返回飯店</div><div class="id">榮站步行 17分</div></div></div>
-</div></div>
-<div class="sb"><span class="si2">⛩️ 熱田神宮 09:00</span><span class="si2">·</span><span class="si2">🍱 鰻魚飯 約11:30</span><span class="si2">·</span><span class="si2">🏯 岐阜城 14:45</span><span class="si2">·</span><span class="si2">🚢 鵜飼 18:15</span></div>
+  </div>
+
+  <div class="sb"><span class="si2">⛩️ 熱田神宮 09:00</span><span class="si2">·</span><span class="si2">🍱 鰻魚飯 約11:30</span><span class="si2">·</span><span class="si2">🏯 岐阜城 14:45</span><span class="si2">·</span><span class="si2">🚢 鵜飼 18:15</span></div>
 </div>
 
-<!-- DAY 3 -->
-<div class="day-card">
-<div class="day-accent"></div>
-<div class="day-header" onclick="togDay('dy3')">
-  <div class="day-left"><div class="day-num">03</div><div class="day-info"><div class="day-date">9月7日（一）平日</div><div class="day-title">吉卜力公園・一整天</div></div></div>
-  <span class="chevron" id="ch-dy3">▾</span>
-</div>
-<div class="day-body" id="dy3"><div class="tl">
+<!-- ══════════════ DAY 3 DETAIL ══════════════ -->
+<div class="panel" id="tab-day3">
+  <div class="dd-topbar">
+    <button class="dd-back" onclick="switchTab('home',null)" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18 L9 12 L15 6"/></svg></button>
+    <div class="dd-daylabel day-3">DAY 03</div>
+    <div class="dd-spacer"></div>
+  </div>
+
+  <div class="dd-titlebar">
+    <div class="dd-title">吉卜力公園・一整天</div>
+    <div class="dd-datemeta">9/7 · MON</div>
+  </div>
+
+  <div class="dd-banner day-3">
+    <div class="dd-banner-illust"><svg viewBox="0 0 68 60" xmlns="http://www.w3.org/2000/svg"><ellipse cx="24" cy="26" rx="16" ry="18" fill="#4E7043"/><rect x="22" y="42" width="4" height="12" fill="#3D2E27"/><ellipse cx="52" cy="34" rx="10" ry="12" fill="#6B8A57"/><rect x="50" y="44" width="4" height="10" fill="#3D2E27"/><rect x="0" y="54" width="68" height="6" fill="#8A6A2D"/><rect x="4" y="40" width="4" height="6" fill="#C69B45"/><rect x="3" y="39" width="6" height="1.5" fill="#3D2E27"/><rect x="3" y="46" width="6" height="1.5" fill="#3D2E27"/><line x1="6" y1="30" x2="6" y2="40" stroke="#3D2E27" stroke-width="0.8"/></svg></div>
+  </div>
+
+  <div class="dd-infobar">
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14 C8 14 3 9 3 6 A5 5 0 0 1 13 6 C13 9 8 14 8 14 Z"/><circle cx="8" cy="6" r="1.8"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num">1</div>
+        <div class="dd-stat-label">SPOTS</div>
+      </div>
+    </div>
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="5" height="8"/><rect x="8" y="3" width="6" height="11"/><line x1="4" y1="8.5" x2="5" y2="8.5"/><line x1="4" y1="11" x2="5" y2="11"/><line x1="10" y1="6" x2="12" y2="6"/><line x1="10" y1="9" x2="12" y2="9"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num">1</div>
+        <div class="dd-stat-label">CITIES</div>
+      </div>
+    </div>
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3 L8 8 L12 3"/><line x1="8" y1="8" x2="8" y2="13"/><line x1="4" y1="9.5" x2="12" y2="9.5"/><line x1="4" y1="11.5" x2="12" y2="11.5"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num" id="dd-budget-3">¥—</div>
+        <div class="dd-stat-label">EST.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl" id="tl-3">
 <div class="row"><div class="tc"><span class="tm">08:20</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">出門・步行至榮站</div><div class="id">飯店 → 榮站：2+15=17分</div></div></div>
 <div class="row"><div class="tc"><span class="tm">08:37</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 東山線 榮 → 藤之丘</div><div class="ti"><div class="tr2">東山線往藤之丘・約20分</div><div class="tr2">預計班次：08:40 發 → 09:00 藤之丘抵</div><div class="tb">▸ 備用班次：08:45 發（班距約3-5分）</div></div></div></div>
 <div class="row"><div class="tc"><span class="tm">09:00</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 Linimo 磁浮 → 愛・地球博紀念公園站</div><div class="ti"><div class="tr2">藤之丘 → 愛・地球博紀念公園・約17分</div><div class="tr2">預計班次：09:05 發 → 09:22 抵</div><div class="tb">▸ 備用班次：09:15 發（約每10分一班）</div></div></div></div>
@@ -349,18 +927,53 @@ body {
 <div class="row"><div class="tc"><span class="tm">17:30</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">步行至公園站・返回名古屋</div><div class="id">出口 → 公園站：約10+15=25分</div><div class="ti"><div class="tr2">預計班次：18:00 公園站發 → 18:17 藤之丘 → 18:40 榮抵</div><div class="tb">▸ 備用班次：18:10 公園站發</div></div></div></div>
 <div class="row"><div class="tc"><span class="tm">18:40</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🍜 晚餐・榮周邊・90分</div></div></div>
 <div class="row"><div class="tc"><span class="tm">20:10</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">🏨 返回飯店・步行 17分・預計 20:27 抵</div></div></div>
-</div></div>
-<div class="sb"><span class="si2">🚆 出發 08:20</span><span class="si2">·</span><span class="si2">🌿 排隊 09:40</span><span class="si2">·</span><span class="si2">🎪 入場 10:00</span><span class="si2">·</span><span class="si2">🏨 返飯店 約 20:27</span></div>
+  </div>
+
+  <div class="sb"><span class="si2">🚆 出發 08:20</span><span class="si2">·</span><span class="si2">🌿 排隊 09:40</span><span class="si2">·</span><span class="si2">🎪 入場 10:00</span><span class="si2">·</span><span class="si2">🏨 返飯店 約 20:27</span></div>
 </div>
 
-<!-- DAY 4 -->
-<div class="day-card">
-<div class="day-accent"></div>
-<div class="day-header" onclick="togDay('dy4')">
-  <div class="day-left"><div class="day-num">04</div><div class="day-info"><div class="day-date">9月8日（二）</div><div class="day-title">清洲城・大須・手羽先・榮夜景</div></div></div>
-  <span class="chevron" id="ch-dy4">▾</span>
-</div>
-<div class="day-body" id="dy4"><div class="tl">
+<!-- ══════════════ DAY 4 DETAIL ══════════════ -->
+<div class="panel" id="tab-day4">
+  <div class="dd-topbar">
+    <button class="dd-back" onclick="switchTab('home',null)" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18 L9 12 L15 6"/></svg></button>
+    <div class="dd-daylabel day-4">DAY 04</div>
+    <div class="dd-spacer"></div>
+  </div>
+
+  <div class="dd-titlebar">
+    <div class="dd-title">清洲城・大須・榮夜景</div>
+    <div class="dd-datemeta">9/8 · TUE</div>
+  </div>
+
+  <div class="dd-banner day-4">
+    <div class="dd-banner-illust"><svg viewBox="0 0 68 60" xmlns="http://www.w3.org/2000/svg"><path d="M10 46 L10 30 L14 30 L14 24 L18 24 L18 20 L24 15 L30 20 L30 24 L34 24 L34 30 L38 30 L38 46 Z" fill="#F0E3D0"/><path d="M14 24 L18 20 L18 24 Z" fill="#C15E4C"/><path d="M30 24 L30 20 L34 24 Z" fill="#C15E4C"/><path d="M18 20 L24 15 L30 20 L26 20 L26 18 L22 18 L22 20 Z" fill="#C15E4C"/><rect x="20" y="36" width="8" height="10" fill="#3D2E27"/><rect x="0" y="46" width="68" height="14" fill="#7B9967"/><path d="M42 34 L60 34 L58 56 L44 56 Z" fill="#C15E4C"/><path d="M46 34 Q46 26 51 26 M56 34 Q56 26 51 26" fill="none" stroke="#C15E4C" stroke-width="2"/><rect x="46" y="30" width="4" height="8" fill="#F0E3D0" transform="rotate(-10 48 34)"/><rect x="52" y="30" width="4" height="8" fill="#F0E3D0" transform="rotate(8 54 34)"/></svg></div>
+  </div>
+
+  <div class="dd-infobar">
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14 C8 14 3 9 3 6 A5 5 0 0 1 13 6 C13 9 8 14 8 14 Z"/><circle cx="8" cy="6" r="1.8"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num">4</div>
+        <div class="dd-stat-label">SPOTS</div>
+      </div>
+    </div>
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="5" height="8"/><rect x="8" y="3" width="6" height="11"/><line x1="4" y1="8.5" x2="5" y2="8.5"/><line x1="4" y1="11" x2="5" y2="11"/><line x1="10" y1="6" x2="12" y2="6"/><line x1="10" y1="9" x2="12" y2="9"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num">2</div>
+        <div class="dd-stat-label">CITIES</div>
+      </div>
+    </div>
+    <div class="dd-info">
+      <div class="dd-info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3 L8 8 L12 3"/><line x1="8" y1="8" x2="8" y2="13"/><line x1="4" y1="9.5" x2="12" y2="9.5"/><line x1="4" y1="11.5" x2="12" y2="11.5"/></svg></div>
+      <div class="dd-info-text">
+        <div class="dd-stat-num" id="dd-budget-4">¥—</div>
+        <div class="dd-stat-label">EST.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl" id="tl-4">
 <div class="row"><div class="tc"><span class="tm">08:30</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">出門・步行至榮站</div><div class="id">飯店 → 榮站：2+15=17分</div></div></div>
 <div class="row"><div class="tc"><span class="tm">08:47</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">🚆 名城線 → 金山・轉名鐵往新清洲</div><div class="ti"><div class="tr2">名城線右回り → 金山（約5分）→ 名鐵本線特急往岐阜方向</div><div class="tr2">預計班次：08:50 榮發 → 08:55 金山 → 09:04 新清洲抵</div><div class="tb">▸ 備用班次：09:20 金山發（名鐵特急約30分一班）</div></div></div></div>
 <div class="row"><div class="tc"><span class="tm">09:04</span></div><div class="ic"><div class="dot tr"></div></div><div class="cc"><div class="it">步行至清洲城 <a class="ml" href="https://maps.google.com/?q=清洲城+愛知県清須市朝日城屋敷1-1" target="_blank">📍 地圖</a></div><div class="id">新清洲站 → 清洲城：20+15=35分・五條川沿岸散步</div></div></div>
@@ -373,12 +986,25 @@ body {
 <div class="row"><div class="tc"><span class="tm">16:20</span></div><div class="ic"><div class="dot fo"></div></div><div class="cc"><div class="it">🍗 晚餐・世界的山將 手羽先 <a class="ml" href="https://maps.google.com/?q=世界の山ちゃん+本店+名古屋市中区栄4丁目" target="_blank">📍 本店地圖</a></div><div class="id">名古屋名物手羽先・搭配生啤・90分</div></div></div>
 <div class="row"><div class="tc"><span class="tm">17:50</span></div><div class="ic"><div class="dot si"></div></div><div class="cc"><div class="it">🌃 綠洲21 + MIRAI 電視塔夜景 <a class="ml" href="https://maps.google.com/?q=オアシス21+名古屋市東区東桜1丁目11-1" target="_blank">📍 綠洲21</a> <a class="ml" href="https://maps.google.com/?q=中部電力MIRAIタワー+名古屋市中区錦3丁目6-15" target="_blank">📍 電視塔</a></div><div class="id">水之宇宙飛船夜間燈光・電視塔觀景台（¥1,300）・停留 1.5 小時</div></div></div>
 <div class="row"><div class="tc"><span class="tm">19:20</span></div><div class="ic"><div class="dot ho"></div></div><div class="cc"><div class="it">🏨 返回飯店・步行 17分・預計 19:37 抵</div><div class="id">今晚整理行李備明日出發京都</div><div class="nb"><div class="tr2">📌 9/9 出發京都：確認新幹線班次・行李可寄存名古屋站・記得 checkout</div></div></div></div>
-</div></div>
-<div class="sb"><span class="si2">🏯 清洲城 09:39</span><span class="si2">·</span><span class="si2">🛍️ 大須 13:40</span><span class="si2">·</span><span class="si2">🍗 手羽先 16:20</span><span class="si2">·</span><span class="si2">🌃 夜景 17:50</span></div>
-</div>
+  </div>
+
+  <div class="sb"><span class="si2">🏯 清洲城 09:39</span><span class="si2">·</span><span class="si2">🛍️ 大須 13:40</span><span class="si2">·</span><span class="si2">🍗 手羽先 16:20</span><span class="si2">·</span><span class="si2">🌃 夜景 17:50</span></div>
 </div>
 
-<!-- ══════════════ BUDGET ══════════════ -->
+<!-- ══════════════ MAP (placeholder) ══════════════ -->
+<div class="panel" id="tab-map">
+  <div class="coming-soon">
+    <svg class="coming-soon-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 12 L20 8 L28 12 L40 8 L40 36 L28 40 L20 36 L8 40 Z"/>
+      <line x1="20" y1="8" x2="20" y2="36"/>
+      <line x1="28" y1="12" x2="28" y2="40"/>
+    </svg>
+    <div class="coming-soon-title">地圖路線</div>
+    <div class="coming-soon-desc">Stage 4 會加上四天路線圖<br>與站點快速跳轉列表</div>
+  </div>
+</div>
+
+<!-- ══════════════ BUDGET (Expense) ══════════════ -->
 <div class="panel" id="tab-budget">
 
 <div class="bud-summary">
@@ -490,10 +1116,27 @@ body {
 
 <script>
 function switchTab(id,btn){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  btn.classList.add('active');
+  // Itinerary tab shortcut: jump to today's day (or day 1 pre-trip / day 4 post-trip)
+  if(id==='itinerary'){
+    var s=computeStatus();
+    if(s.phase==='during'&&s.todayN)id='day'+s.todayN;
+    else if(s.phase==='after')id='day4';
+    else id='day1';
+  }
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.bnav-btn').forEach(function(b){b.classList.remove('active'); });
+  var panel=document.getElementById('tab-'+id);
+  if(panel)panel.classList.add('active');
+  // Determine which nav button lights up
+  var navKey=id;
+  if(id.indexOf('day')===0)navKey='itinerary';
+  if(btn)btn.classList.add('active');
+  else{
+    var b=document.querySelector('.bnav-btn[data-tab="'+navKey+'"]');
+    if(b)b.classList.add('active');
+  }
+  window.scrollTo(0,0);
+  if(id==='home')renderHome();
 }
 function togDay(id){
   var b=document.getElementById(id),c=document.getElementById('ch-'+id);
@@ -630,6 +1273,14 @@ function renderEntries(){
   var gtwd=document.getElementById('bud-grand-twd');
   if(gjpy)gjpy.textContent='¥'+grandJPY.toLocaleString();
   if(gtwd)gtwd.textContent='NT$'+grandTWD.toLocaleString();
+  if(typeof updateHomeBudget==='function')updateHomeBudget(grandJPY);
+  // Push per-day totals into day-detail info bars
+  if(typeof updateDayBudget==='function'){
+    DAY_ORDER.forEach(function(day,i){
+      var d=summaryByDay[day]||{jpy:0,twd:0};
+      updateDayBudget(i+1,d.jpy);
+    });
+  }
   // per-person totals
   ['曹小姐','巫先生'].forEach(function(person,idx){
     var prefix=idx===0?'bud-p1':'bud-p2';
@@ -815,6 +1466,126 @@ function deleteClItem(row,evt){
 
 fetchChecklist();
 setInterval(fetchChecklist,60000);
+// ══════════════ HOME PAGE ══════════════
+var TRIP = {
+  title: 'NAGOYA TRIP',
+  startDate: '2026-09-05',
+  endDate: '2026-09-08',
+  days: [
+    { n:1, date:'2026-09-05', label:'9/5', weekday:'SAT', title:'抵達日・安頓入住', spots:1, icon:'hotel' },
+    { n:2, date:'2026-09-06', label:'9/6', weekday:'SUN', title:'熱田・鰻魚飯・岐阜・鵜飼', spots:4, icon:'torii' },
+    { n:3, date:'2026-09-07', label:'9/7', weekday:'MON', title:'吉卜力公園・一整天', spots:1, icon:'forest' },
+    { n:4, date:'2026-09-08', label:'9/8', weekday:'TUE', title:'清洲城・大須・榮夜景', spots:4, icon:'castle' }
+  ]
+};
+
+var ILLUSTRATIONS = {
+  hotel: '<svg viewBox="0 0 68 60" xmlns="http://www.w3.org/2000/svg"><path d="M10 22 L32 8 L54 22 L54 26 L10 26 Z" fill="#C15E4C"/><rect x="14" y="24" width="36" height="30" fill="#F0E3D0"/><rect x="18" y="30" width="6" height="6" fill="#7692AB"/><rect x="40" y="30" width="6" height="6" fill="#7692AB"/><rect x="18" y="42" width="6" height="6" fill="#7692AB"/><rect x="40" y="42" width="6" height="6" fill="#7692AB"/><rect x="28" y="36" width="8" height="18" fill="#3D2E27"/><circle cx="34" cy="46" r="0.7" fill="#C69B45"/><rect x="52" y="44" width="12" height="10" fill="#C69B45" rx="1"/><rect x="55" y="41" width="6" height="3" fill="none" stroke="#8A6A2D" stroke-width="1" rx="0.6"/><rect x="52" y="47" width="12" height="0.8" fill="#8A6A2D"/></svg>',
+  torii: '<svg viewBox="0 0 68 60" xmlns="http://www.w3.org/2000/svg"><ellipse cx="52" cy="20" rx="12" ry="10" fill="#6B8A57"/><rect x="50" y="26" width="4" height="10" fill="#5B4838"/><path d="M4 14 Q22 8 40 14 L40 18 L4 18 Z" fill="#C15E4C"/><rect x="8" y="18" width="4" height="24" fill="#C15E4C"/><rect x="32" y="18" width="4" height="24" fill="#C15E4C"/><rect x="6" y="22" width="32" height="3" fill="#C15E4C"/><path d="M0 48 Q8 46 16 48 T32 48 T48 48 T64 48 M0 54 Q8 52 16 54 T32 54 T48 54 T64 54" stroke="#7692AB" stroke-width="1.5" fill="none"/><path d="M42 42 L64 42 L60 48 L46 48 Z" fill="#F0E3D0"/><circle cx="53" cy="36" r="3" fill="#C69B45"/><line x1="53" y1="33" x2="53" y2="42" stroke="#3D2E27" stroke-width="1"/></svg>',
+  forest: '<svg viewBox="0 0 68 60" xmlns="http://www.w3.org/2000/svg"><ellipse cx="24" cy="26" rx="16" ry="18" fill="#4E7043"/><rect x="22" y="42" width="4" height="12" fill="#3D2E27"/><ellipse cx="52" cy="34" rx="10" ry="12" fill="#6B8A57"/><rect x="50" y="44" width="4" height="10" fill="#3D2E27"/><rect x="0" y="54" width="68" height="6" fill="#8A6A2D"/><rect x="4" y="40" width="4" height="6" fill="#C69B45"/><rect x="3" y="39" width="6" height="1.5" fill="#3D2E27"/><rect x="3" y="46" width="6" height="1.5" fill="#3D2E27"/><line x1="6" y1="30" x2="6" y2="40" stroke="#3D2E27" stroke-width="0.8"/></svg>',
+  castle: '<svg viewBox="0 0 68 60" xmlns="http://www.w3.org/2000/svg"><path d="M10 46 L10 30 L14 30 L14 24 L18 24 L18 20 L24 15 L30 20 L30 24 L34 24 L34 30 L38 30 L38 46 Z" fill="#F0E3D0"/><path d="M14 24 L18 20 L18 24 Z" fill="#C15E4C"/><path d="M30 24 L30 20 L34 24 Z" fill="#C15E4C"/><path d="M18 20 L24 15 L30 20 L26 20 L26 18 L22 18 L22 20 Z" fill="#C15E4C"/><rect x="20" y="36" width="8" height="10" fill="#3D2E27"/><rect x="0" y="46" width="68" height="14" fill="#7B9967"/><path d="M42 34 L60 34 L58 56 L44 56 Z" fill="#C15E4C"/><path d="M46 34 Q46 26 51 26 M56 34 Q56 26 51 26" fill="none" stroke="#C15E4C" stroke-width="2"/><rect x="46" y="30" width="4" height="8" fill="#F0E3D0" transform="rotate(-10 48 34)"/><rect x="52" y="30" width="4" height="8" fill="#F0E3D0" transform="rotate(8 54 34)"/></svg>'
+};
+
+function todayISO(){
+  var d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function computeStatus(){
+  var today = todayISO();
+  if (today < TRIP.startDate) {
+    var msDiff = new Date(TRIP.startDate) - new Date(today);
+    return { phase:'before', daysLeft: Math.ceil(msDiff/86400000), todayN:null };
+  }
+  if (today > TRIP.endDate) return { phase:'after', todayN:null };
+  var d = TRIP.days.find(function(x){ return x.date===today; });
+  return { phase:'during', todayN: d ? d.n : null };
+}
+
+function dayStatus(day, phase, todayN){
+  if (phase === 'before') return 'upcoming';
+  if (phase === 'after') return 'completed';
+  if (day.n < todayN) return 'completed';
+  if (day.n === todayN) return 'today';
+  return 'upcoming';
+}
+
+function renderHome(){
+  var s = computeStatus();
+  var statusEl = document.getElementById('home-status');
+  if (statusEl) {
+    if (s.phase === 'before') {
+      statusEl.innerHTML = '距離出發還有 <b>'+s.daysLeft+'</b> 天';
+      statusEl.className = 'home-status upcoming';
+    } else if (s.phase === 'during') {
+      var d = TRIP.days.find(function(x){ return x.n===s.todayN; });
+      statusEl.innerHTML = 'DAY '+s.todayN+'｜今天：'+(d?d.title:'');
+      statusEl.className = 'home-status today';
+    } else {
+      statusEl.textContent = '旅程圓滿完成';
+      statusEl.className = 'home-status done';
+    }
+  }
+  var container = document.getElementById('home-days');
+  if (!container) return;
+  container.innerHTML = TRIP.days.map(function(d){
+    var st = dayStatus(d, s.phase, s.todayN);
+    var stLabel = st==='today'?'TODAY':st==='completed'?'COMPLETED':'UPCOMING';
+    return '<div class="hd-card day-'+d.n+' '+st+'" onclick="jumpToDay('+d.n+')">'
+      + '<div class="hd-left"><div class="hd-label">DAY</div><div class="hd-num">'+String(d.n).padStart(2,'0')+'</div></div>'
+      + '<div class="hd-body">'
+      +   '<div class="hd-top"><div class="hd-date">'+d.label+' / '+d.weekday+'</div>'
+      +   '<div class="hd-title">'+d.title+'</div></div>'
+      +   '<div class="hd-meta"><span class="hd-status hd-status-'+st+'">'+stLabel+'</span>'
+      +     '<span class="hd-spots">'+d.spots+' spots</span>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="hd-illust">'+ILLUSTRATIONS[d.icon]+'</div>'
+      + '</div>';
+  }).join('');
+}
+
+function jumpToDay(n){
+  var btn=document.querySelector('.bnav-btn[data-tab="itinerary"]');
+  switchTab('day'+n,btn);
+}
+
+function updateHomeBudget(jpy){
+  var el = document.getElementById('home-budget');
+  if (el) el.textContent = jpy > 0 ? '¥'+(jpy>=10000 ? (jpy/1000).toFixed(0)+'k' : jpy.toLocaleString()) : '¥0';
+}
+
+function updateDayBudget(n,jpy){
+  var el=document.getElementById('dd-budget-'+n);
+  if(el)el.textContent=jpy>0?'¥'+jpy.toLocaleString():'¥—';
+}
+
+renderHome();
 </script>
+
+<!-- ══════════════ BOTTOM NAV ══════════════ -->
+<nav class="bottom-nav" aria-label="Main navigation">
+  <button class="bnav-btn active" data-tab="home" onclick="switchTab('home',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 L12 4 L21 12"/><path d="M5 10 V20 H19 V10"/><path d="M10 20 V14 H14 V20"/></svg>
+    <span>Trip</span>
+  </button>
+  <button class="bnav-btn" data-tab="itinerary" onclick="switchTab('itinerary',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>
+    <span>Itinerary</span>
+  </button>
+  <button class="bnav-btn" data-tab="map" onclick="switchTab('map',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21 C12 21 5 13 5 9 A7 7 0 0 1 19 9 C19 13 12 21 12 21 Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+    <span>Map</span>
+  </button>
+  <button class="bnav-btn" data-tab="budget" onclick="switchTab('budget',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10 H21"/><circle cx="16" cy="14" r="1.5"/></svg>
+    <span>Expense</span>
+  </button>
+  <button class="bnav-btn" data-tab="checklist" onclick="switchTab('checklist',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7 V4 H15 V7"/><line x1="9" y1="11" x2="9" y2="17"/><line x1="15" y1="11" x2="15" y2="17"/></svg>
+    <span>Packing</span>
+  </button>
+</nav>
+
 </body>
 </html>
