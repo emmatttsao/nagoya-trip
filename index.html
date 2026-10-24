@@ -1852,12 +1852,18 @@ body { padding-top: env(safe-area-inset-top); background: var(--bg); }
     <div style="margin-bottom:10px">
       <div class="bud-summary-label" style="font-weight:700;margin-bottom:4px">曹小姐</div>
       <div class="bud-summary-row"><span class="bud-summary-label">共同花費</span><span class="bud-summary-val" id="bud-p1-shared">¥0 / NT$0</span></div>
-      <div class="bud-summary-row" style="border:none"><span class="bud-summary-label">個人花費</span><span class="bud-summary-val" id="bud-p1-personal">¥0 / NT$0</span></div>
+      <div class="bud-summary-row"><span class="bud-summary-label">個人花費</span><span class="bud-summary-val" id="bud-p1-personal">¥0 / NT$0</span></div>
+      <div class="bud-summary-row" style="border:none"><span class="bud-summary-label">先幫巫先生付</span><span class="bud-summary-val" id="bud-p1-fronted">¥0 / NT$0</span></div>
     </div>
     <div style="padding-top:10px;border-top:.5px solid var(--accent-light)">
       <div class="bud-summary-label" style="font-weight:700;margin-bottom:4px">巫先生</div>
       <div class="bud-summary-row"><span class="bud-summary-label">共同花費</span><span class="bud-summary-val" id="bud-p2-shared">¥0 / NT$0</span></div>
-      <div class="bud-summary-row" style="border:none"><span class="bud-summary-label">個人花費</span><span class="bud-summary-val" id="bud-p2-personal">¥0 / NT$0</span></div>
+      <div class="bud-summary-row"><span class="bud-summary-label">個人花費</span><span class="bud-summary-val" id="bud-p2-personal">¥0 / NT$0</span></div>
+      <div class="bud-summary-row" style="border:none"><span class="bud-summary-label">先幫曹小姐付</span><span class="bud-summary-val" id="bud-p2-fronted">¥0 / NT$0</span></div>
+    </div>
+    <div id="bud-settlement" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--accent-light)">
+      <div class="bud-summary-label" style="font-weight:700;margin-bottom:6px">💰 帳單結算</div>
+      <div id="bud-settlement-msg" style="font-size:13px;color:var(--text2);line-height:1.6">尚無花費紀錄</div>
     </div>
   </div>
 </div>
@@ -1897,6 +1903,7 @@ body { padding-top: env(safe-area-inset-top); background: var(--bg); }
     <select id="f-split" class="bud-input">
       <option value="平分">兩人平分</option>
       <option value="個人">個人花費</option>
+      <option value="代墊">先幫對方付</option>
     </select>
     <input type="text" id="f-note" class="bud-input" placeholder="備註（選填）">
   </div>
@@ -2039,6 +2046,7 @@ body { padding-top: env(safe-area-inset-top); background: var(--bg); }
       <select id="e-split" class="bud-input">
         <option value="平分">兩人平分</option>
         <option value="個人">個人花費</option>
+        <option value="代墊">先幫對方付</option>
       </select>
       <input type="text" id="e-note" class="bud-input" placeholder="備註（選填）">
     </div>
@@ -2220,20 +2228,64 @@ function renderEntries(){
   // per-person totals
   ['曹小姐','巫先生'].forEach(function(person,idx){
     var prefix=idx===0?'bud-p1':'bud-p2';
-    var sharedJPY=0,sharedTWD=0,personalJPY=0,personalTWD=0;
+    var sharedJPY=0,sharedTWD=0,personalJPY=0,personalTWD=0,frontedJPY=0,frontedTWD=0;
     allEntries.forEach(function(e){
       var amt=parseFloat(e['金額(¥)'])||0;
       var cur=e['幣別']||'JPY';
       if(e['誰付']===person){
         if(e['分攤']==='個人'){if(cur==='TWD')personalTWD+=amt;else personalJPY+=amt;}
+        else if(e['分攤']==='代墊'){if(cur==='TWD')frontedTWD+=amt;else frontedJPY+=amt;}
         else{if(cur==='TWD')sharedTWD+=amt;else sharedJPY+=amt;}
       }
     });
     var shEl=document.getElementById(prefix+'-shared');
     var peEl=document.getElementById(prefix+'-personal');
+    var frEl=document.getElementById(prefix+'-fronted');
     if(shEl)shEl.textContent='¥'+sharedJPY.toLocaleString()+' / NT$'+sharedTWD.toLocaleString();
     if(peEl)peEl.textContent='¥'+personalJPY.toLocaleString()+' / NT$'+personalTWD.toLocaleString();
+    if(frEl)frEl.textContent='¥'+frontedJPY.toLocaleString()+' / NT$'+frontedTWD.toLocaleString();
   });
+  // Settlement (net owed between the two)
+  renderSettlement();
+}
+
+function renderSettlement(){
+  var A='曹小姐', B='巫先生';
+  var owedToA={jpy:0,twd:0}, owedToB={jpy:0,twd:0};
+  allEntries.forEach(function(e){
+    var amt=parseFloat(e['金額(¥)'])||0;
+    var cur=e['幣別']||'JPY';
+    var k=cur==='TWD'?'twd':'jpy';
+    var split=e['分攤']||'平分';
+    if(e['誰付']===A){
+      if(split==='平分') owedToA[k]+=amt/2;
+      else if(split==='代墊') owedToA[k]+=amt;
+    } else if(e['誰付']===B){
+      if(split==='平分') owedToB[k]+=amt/2;
+      else if(split==='代墊') owedToB[k]+=amt;
+    }
+  });
+  var netJPY=Math.round(owedToA.jpy-owedToB.jpy);
+  var netTWD=Math.round(owedToA.twd-owedToB.twd);
+  var msgEl=document.getElementById('bud-settlement-msg');
+  if(!msgEl)return;
+  var lines=[];
+  function line(net,cur,sym){
+    if(net===0)return null;
+    var absAmt=Math.abs(net).toLocaleString();
+    if(net>0) return '<b>'+B+'</b> 應還 <b>'+A+'</b> '+sym+absAmt;
+    return '<b>'+A+'</b> 應還 <b>'+B+'</b> '+sym+absAmt;
+  }
+  var l1=line(netJPY,'JPY','¥');
+  var l2=line(netTWD,'TWD','NT$');
+  if(l1)lines.push(l1);
+  if(l2)lines.push(l2);
+  if(lines.length===0){
+    if(allEntries.length===0)msgEl.innerHTML='尚無花費紀錄';
+    else msgEl.innerHTML='兩人已扯平 ✓';
+  } else {
+    msgEl.innerHTML=lines.join('<br>');
+  }
 }
 
 function deleteEntry(row,evt){
